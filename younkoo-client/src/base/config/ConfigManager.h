@@ -9,6 +9,7 @@ class ConfigManager : public Singleton<ConfigManager>
 public:
 	void LoadConfig(std::string name);
 	void SaveConfig(std::string name);
-private:
+	void OpenConfigDirectory();
+	//private:
 	std::filesystem::path GetConfigPath();
 };

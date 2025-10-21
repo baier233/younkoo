@@ -154,13 +154,19 @@ JNI::Field<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/client/player/LocalPlayer"), "showDeathScreen")
 )> showDeathScreen{ *this };/* Z */
 
-JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
-	return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/LocalPlayer", "isHandsBusy", "()Z").first
-)> isHandsBusy{ *this };
+
 
 JNI::Field<Input, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/client/player/LocalPlayer"), "input")
 )> input{ *this };/* Lnet/minecraft/client/player/Input; */
+
+
+JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/LocalPlayer", "isHandsBusy", "()Z").first
+)> isHandsBusy{ *this };
+JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/LocalPlayer", "tick", "()V").first
+)> tick{ *this };
 
 END_KLASS_DEF();
 

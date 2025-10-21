@@ -27,9 +27,14 @@ namespace JNI {
 				clear_ref();
 		}
 
-		bool is_same_object(const ObjectWrapper& other) const
+		inline bool is_same_object(const ObjectWrapper& other) const
 		{
 			return get_env()->IsSameObject(object_instance, other.object_instance) == JNI_TRUE;
+		}
+
+		inline bool isNULL() const
+		{
+			return this->object_instance == nullptr || get_env()->IsSameObject(object_instance, NULL) == JNI_TRUE;
 		}
 
 		template<typename klass_type>

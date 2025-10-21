@@ -9,6 +9,9 @@ class EntityPlayerSP :public EntityPlayer {
 public:
 	using EntityPlayer::EntityPlayer;
 	Wrapper::MovementInput getMovementInput();
+	static  jclass klass();
+	void setSprinting(bool sprinting);
+	bool wasSprinting();
 };
 
 END_WRAP

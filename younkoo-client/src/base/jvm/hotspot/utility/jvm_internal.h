@@ -50,7 +50,25 @@ enum {
 
 #undef CM_FLAGS_GET_SET
 
-
+enum {
+	JVM_CONSTANT_Utf8 = 1,
+	JVM_CONSTANT_Unicode,               /* unused */
+	JVM_CONSTANT_Integer,
+	JVM_CONSTANT_Float,
+	JVM_CONSTANT_Long,
+	JVM_CONSTANT_Double,
+	JVM_CONSTANT_Class,
+	JVM_CONSTANT_String,
+	JVM_CONSTANT_Fieldref,
+	JVM_CONSTANT_Methodref,
+	JVM_CONSTANT_InterfaceMethodref,
+	JVM_CONSTANT_NameAndType,
+	JVM_CONSTANT_MethodHandle = 15,  // JSR 292
+	JVM_CONSTANT_MethodType = 16,  // JSR 292
+	//JVM_CONSTANT_(unused)             = 17,  // JSR 292 early drafts only
+	JVM_CONSTANT_InvokeDynamic = 18,  // JSR 292
+	JVM_CONSTANT_ExternalMax = 18   // Last tag found in classfiles
+};
 
 enum Flags
 {
@@ -199,7 +217,7 @@ namespace jvm_internal {
 	public:
 		auto get_flags() -> jint;
 
-	    auto set_flags(jint flags) -> void;
+		auto set_flags(jint flags) -> void;
 
 		inline auto atomic_set_flags(const jint bits) -> void {
 			const jint old_flags = get_flags();

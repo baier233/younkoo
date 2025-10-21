@@ -17,7 +17,7 @@ namespace JNI {
 			if (id) return;
 			field_name = field_name_lambda()();
 #ifdef LOG
-			std::cout << "Getting Field : " << get_name() + " " + get_signature() << " isStatic :" << is_static << " type:" << typeid(*this).name() << std::endl;
+			LOG("Getting Field : " << get_name() + " " + get_signature() << " isStatic :" << is_static << " type:" << typeid(*this).name());
 #endif // LOG
 			if constexpr (is_static)
 				id = get_env()->GetStaticFieldID(owner_klass, get_name().c_str(), get_signature().c_str());
@@ -43,7 +43,7 @@ namespace JNI {
 		void init() {
 			field_name = field_name_lambda()();
 #ifdef LOG
-			std::cout << "Getting Field : " << get_name() + " " + get_signature() << " isStatic :" << is_static << " type:" << typeid(*this).name() << std::endl;
+			LOG("Getting Field : " << get_name() + " " + get_signature() << " isStatic :" << is_static << " type:" << typeid(*this).name());
 #endif // LOG
 			if constexpr (is_static)
 				id = get_env()->GetStaticFieldID(owner_klass, get_name().c_str(), get_signature().c_str());
@@ -219,7 +219,7 @@ namespace JNI {
 		}
 
 		void print() {
-			std::cout << this->get_name() << " :\n{" << "\n   Name: " << this->get_name() << "\n   Sign:" << this->get_signature() << "\n   Value :" << this->get() << "\n}" << std::endl;
+			LOG(this->get_name() << " :\n{" << "\n   Name: " << this->get_name() << "\n   Sign:" << this->get_signature() << "\n   Value :" << this->get() << "\n}");
 		}
 
 

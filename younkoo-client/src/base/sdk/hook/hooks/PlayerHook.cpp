@@ -3,11 +3,12 @@
 #include <base/Younkoo.hpp>
 #include <base/event/Events.h>
 #include <wrapper/versions/1_18_1/net/minecraft/world/entity/player/Player.h>
+#include <log/LOG.h>
 void PlayerHook::hook(const HookManagerData& container)
 {
 	if (SRGParser::get().GetVersion() != Versions::FORGE_1_18_1)
 		return;
-	std::cout << "Processing hook for Player " << std::endl;
+	LOG("Processing hook for Player ");
 
 	auto& methods_being_hooked = container.methods_being_hooked;
 	auto& methods_dont_compile = container.methods_dont_compile;
@@ -19,11 +20,11 @@ void PlayerHook::hook(const HookManagerData& container)
 	jclass klass = JNI::find_class(V1_18_1::Player::get_name());
 
 	JVM::get().jvmti->RetransformClasses(1, &klass);
-	auto mid = (jmethodID)V1_18_1::Player::static_obj().attack;
-	const auto method = *reinterpret_cast<java_hotspot::method**>(mid);
-	methods_being_hooked.emplace_back(method);
+	auto mid = (jmethodID)V1_18_1::Player::static_obj().attack.init();
+	auto method = *reinterpret_cast<java_hotspot::method**>(mid);
 
-	HookUtils::GenericResolve(method);
+	method = HookUtils::GenericResolve(mid);
+	methods_being_hooked.emplace_back(method);
 
 	const auto constants_pool = method->get_const_method()->get_constants();
 
@@ -49,18 +50,18 @@ void PlayerHook::hook(const HookManagerData& container)
 			current_bytecode.index = bytecodes_index;
 
 			const auto& name = java_runtime::bytecode_names[bytecode];
-			std::cout << "(" << bytecodes_index << ")  " << name << " {";
-			std::cout.flush();
+			LOG_N("(" << bytecodes_index << ")  " << name << " {");
+			FLUSH();
 			auto length = opcodes.get_length();
 
 			for (int i = 0; i < length - 1; ++i) {
 				int operand = static_cast<int>(bytecodes[bytecodes_index + i]);
 				current_bytecode.operands.push_back(operand);
-				std::cout << (i == 0 ? "" : " , ") << operand;
-				std::cout.flush();
+				LOG_N((i == 0 ? "" : " , ") << operand);
+				FLUSH();
 			}
 			method_block.push_back(current_bytecode);
-			std::cout << "}" << std::endl;
+			LOG("}");
 			bytecodes_index += length;
 			});
 	}
@@ -81,24 +82,25 @@ void PlayerHook::hook(const HookManagerData& container)
 				{
 					const auto c_m = bp->method->get_const_method();
 					const auto entries = c_m->get_local_variable_entries();
-					std::cout << "Handling Player.attack Hook" << std::endl;
+					LOG("Handling Player.attack Hook");
 					for (auto& entry : entries)
 					{
-						std::cout << std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
-							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot) << std::endl;
+						LOG(std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
+							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot));
 					}
 				}
 				});
 			JNI::set_thread_env(bp->java_thread->get_jni_environment());
 			auto o_state = bp->java_thread->get_thread_state();
-			bp->java_thread->set_thread_state(JavaThreadState::_thread_in_native);
+			HookUtils::o_thread_map[bp->java_thread] = static_cast<JavaThreadState>(o_state);
+			//bp->java_thread->set_thread_state(JavaThreadState::_thread_in_native);
 			auto entity_obj = (jobject)bp->get_parameter(1);
 			V1_18_1::Entity entity(entity_obj, true);
 			Wrapper::Entity wrapEntitiy(entity);
+			//LOG("Fire Attack Event !");
 			Younkoo::get().EventBus->fire_event(EventAttack{ wrapEntitiy });
 			entity.clear_ref();
-			bp->java_thread->set_thread_state(o_state);
-			//std::cout << "OnRendering BED" << std::endl;
+			//bp->java_thread->set_thread_state(o_state);
 
 		});
 

@@ -20,7 +20,7 @@ namespace JNI {
 			this->method_name = get_name();
 			auto method_sign = get_signature();
 #ifdef LOG
-			std::cout << "Getting Method : " << method_name + " " + method_sign << " isStatic :" << is_static << std::endl;
+			LOG("Getting Method : " << method_name + " " + method_sign << " isStatic :" << is_static);
 #endif // LOG
 			if constexpr (is_static)
 				id = get_env()->GetStaticMethodID(owner_klass, method_name.c_str(), method_sign.c_str());
@@ -37,7 +37,7 @@ namespace JNI {
 			this->method_name = method_name;
 			auto method_sign = get_signature();
 #ifdef LOG
-			std::cout << "Getting Method : " << method_name + " " + method_sign << " isStatic :" << is_static << std::endl;
+			LOG("Getting Method : " << method_name + " " + method_sign << " isStatic :" << is_static);
 #endif // LOG
 			if constexpr (is_static)
 				id = get_env()->GetStaticMethodID(owner_klass, method_name.c_str(), method_sign.c_str());
@@ -185,7 +185,7 @@ namespace JNI {
 		}
 
 		void print() {
-			std::cout << this->get_name() << " :\n{" << "\n   Name: " << this->get_name() << "\n   Sign:" << this->get_signature() << "\n   ID :" << this->id << "\n}" << std::endl;
+			LOG(this->get_name() << " :\n{" << "\n   Name: " << this->get_name() << "\n   Sign:" << this->get_signature() << "\n   ID :" << this->id << "\n}");
 		}
 
 		bool is_method_static()

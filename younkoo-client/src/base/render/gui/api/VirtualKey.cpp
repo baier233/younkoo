@@ -1,4 +1,6 @@
 ﻿#include "VirtualKey.h"
+#include "utils/Wstr.h"
+
 constexpr const char* keys[] =
 {
 	"None",
@@ -172,4 +174,30 @@ constexpr const char* keys[] =
 std::string VirtualKey::toString(int key)
 {
 	return std::string(keys[key]);
+}
+
+std::wstring VirtualKey::toStringW(int key)
+{
+	return wstr::toString(keys[key]);
+}
+#include <Windows.h>
+#include <base/render/gui/input/Context.hpp>
+int getKeyMods()
+{
+	int mods = 0;
+
+	if (GetKeyState(VK_SHIFT) & 0x8000)
+		mods |= CONTEXT_MOD_SHIFT;
+	if (GetKeyState(VK_CONTROL) & 0x8000)
+		mods |= CONTEXT_MOD_CONTROL;
+	if (GetKeyState(VK_MENU) & 0x8000)
+		mods |= CONTEXT_MOD_ALT;
+	if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000)
+		mods |= CONTEXT_MOD_SUPER;
+	if (GetKeyState(VK_CAPITAL) & 1)
+		mods |= CONTEXT_MOD_CAPS_LOCK;
+	if (GetKeyState(VK_NUMLOCK) & 1)
+		mods |= CONTEXT_MOD_NUM_LOCK;
+
+	return mods;
 }

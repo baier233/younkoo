@@ -1,6 +1,6 @@
-#include "HitDelayFix.h"
+﻿#include "HitDelayFix.h"
 
-HitDelayFix::HitDelayFix() :AbstractModule(xorstr_("HitDelayFix"), Category::PLAYER)
+HitDelayFix::HitDelayFix() :AbstractModule(xorstr_("HitDelayFix"), Category::PLAYER, xorstr_("Hit Delay Fix."))
 {
 }
 

@@ -17,6 +17,8 @@ namespace java_hotspot {
 
 		auto get_constants() -> const_pool*;
 
+		auto set_constants(const_pool*) -> void;
+
 		auto get_methods() -> array<method*>*;
 
 		auto get_fields() -> array<uint16_t>*;

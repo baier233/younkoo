@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Publish|Win32">
+      <Configuration>Publish</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Publish|x64">
+      <Configuration>Publish</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -39,6 +47,13 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -46,6 +61,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
@@ -64,20 +86,30 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)\ext\nanovg;$(ProjectDir)\src\base\sdk;$(ProjectDir)\src;$(ProjectDir)\ext\ultralight;$(ProjectDir)\src\base\jvm;$(ProjectDir)\ext;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\ext\ultralight\lib;$(ProjectDir)\ext\GL\debug;$(ProjectDir)\ext\GL;$(ProjectDir)\ext\SDL2;$(ProjectDir)\ext\detours;$(ProjectDir)\ext\glad;$(ProjectDir)\ext\GLFW;$(ProjectDir)\ext\nanovg;$(ProjectDir)\ext\jni;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(ProjectDir)\ext\capstone;$(ProjectDir)\ext\GL\debug;$(ProjectDir)\ext\GL;$(ProjectDir)\ext\SDL2;$(ProjectDir)\ext\detours;$(ProjectDir)\ext\glad;$(ProjectDir)\ext\GLFW;$(ProjectDir)\ext\nanovg;$(ProjectDir)\ext\jni;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)\ext\nanovg;$(ProjectDir)\src\base\sdk;$(ProjectDir)\src;$(ProjectDir)\ext\ultralight;$(ProjectDir)\src\base\jvm;$(ProjectDir)\ext;$(IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)\ext\GL;$(ProjectDir)\ext\SDL2;$(ProjectDir)\ext\detours;$(ProjectDir)\ext\glad;$(ProjectDir)\ext\GLFW;$(ProjectDir)\ext\nanovg;$(ProjectDir)\ext\jni;$(ProjectDir)\ext\ultralight\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)\ext\nanovg;$(ProjectDir)\src\base\sdk;$(ProjectDir)\src;$(ProjectDir)\ext\ultralight;$(ProjectDir)\src\base\jvm;$(ProjectDir)\ext;$(ProjectDir)\ext\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\ext\GL;$(ProjectDir)\ext\SDL2;$(ProjectDir)\ext\detours;$(ProjectDir)\ext\glad;$(ProjectDir)\ext\GLFW;$(ProjectDir)\ext\nanovg;$(ProjectDir)\ext\jni;$(ProjectDir)\ext\capstone;$(ProjectDir)\ext\zlib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
+    <IncludePath>$(ProjectDir)\ext\nanovg;$(ProjectDir)\src\base\sdk;$(ProjectDir)\src;$(ProjectDir)\ext\ultralight;$(ProjectDir)\src\base\jvm;$(ProjectDir)\ext;$(ProjectDir)\ext\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\ext\GL;$(ProjectDir)\ext\SDL2;$(ProjectDir)\ext\detours;$(ProjectDir)\ext\glad;$(ProjectDir)\ext\GLFW;$(ProjectDir)\ext\nanovg;$(ProjectDir)\ext\jni;$(ProjectDir)\ext\capstone;$(ProjectDir)\ext\zlib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <VcpkgUseStatic>true</VcpkgUseStatic>
@@ -120,6 +152,25 @@
       <EnableUAC>false</EnableUAC>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Publish|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;YOUNKOOCLIENT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -136,10 +187,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>;ws2_32.lib;OpenGl32.lib;jvm.lib;glew32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>capstone.lib;ws2_32.lib;OpenGl32.lib;jvm.lib;glew32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass -Command "&amp; { $(ProjectDir)scripts\update_git_info.ps1 $(ProjectDir) }"</Command>
+      <Command>powershell -ExecutionPolicy Bypass -Command "&amp; { $(ProjectDir)scripts\update_git_info.ps1 $(ProjectDir) }"
+"$(ProjectDir)scripts\SrgSlimmingMaster.exe"
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -160,12 +213,120 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>capstone.lib;ws2_32.lib;OpenGl32.lib;jvm.lib;glew32.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass -Command "&amp; { $(ProjectDir)scripts\update_git_info.ps1 $(ProjectDir) }"
+"$(ProjectDir)scripts\SrgSlimmingMaster.exe"
+</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;YOUNKOOCLIENT_EXPORTS;_WINDOWS;_USRDLL;CURRENT_IN_PUBLISH_CONFIGURTION="$(ConfigurationName)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>;ws2_32.lib;OpenGl32.lib;jvm.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>capstone.lib;ws2_32.lib;OpenGl32.lib;jvm.lib;glew32.lib;zlibstat.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass -Command "&amp; { $(ProjectDir)scripts\update_git_info.ps1 $(ProjectDir) }"
+"$(ProjectDir)scripts\SrgSlimmingMaster.exe"
+</Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0APacketAnimation.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C02PacketUseEntity%24Action.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C02PacketUseEntity.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0BPacketEntityAction%24Action.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0BPacketEntityAction.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\NetworkManager.cpp" />
+    <ClCompile Include="src\base\features\command\Command.cpp" />
+    <ClCompile Include="src\base\features\command\CommandManager.cpp" />
+    <ClCompile Include="src\base\features\command\commands\CommandTarget.cpp" />
+    <ClCompile Include="src\base\features\modules\movement\Blink.cpp" />
+    <ClCompile Include="src\base\features\modules\visual\Chams.cpp" />
+    <ClCompile Include="src\base\render\nano\font\FontManager.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\ChatScreenHook.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\LivingEntityHook.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\setting\setting_button.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\setting_page.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\EntityHook.cpp" />
+    <ClCompile Include="src\base\features\modules\combat\JumpReset.cpp" />
+    <ClCompile Include="src\base\features\modules\movement\AutoSprint.cpp" />
+    <ClCompile Include="src\base\features\modules\player\Stealer.cpp" />
+    <ClCompile Include="src\base\features\modules\visual\FullBright.cpp" />
+    <ClCompile Include="src\base\jvm\ripterms\javahook\Capstone.cpp" />
+    <ClCompile Include="src\base\jvm\ripterms\javahook\JavaHook.cpp" />
+    <ClCompile Include="src\base\jvm\ripterms\javahook\Module.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\LocalPlayerHook.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\MinecraftHook.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\block\state\IBlockState.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\client\renderer\ActiveRenderInfo.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\client\renderer\entity\RenderManager.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\inventory\Container.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\inventory\ContainerChest.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\inventory\IInventory.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\item\ItemArmor.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\multiplayer\PlayerController.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\Packet.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\BooleanValueComponent.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\ColorValueComponent.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\FloatValueComponent.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\IntValueComponent.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\ModeValueComponent.cpp" />
+    <ClCompile Include="src\base\sdk\hook\hooks\ConnectionHook.cpp" />
+    <ClCompile Include="src\base\features\modules\visual\TargetHud.cpp" />
+    <ClCompile Include="src\base\patcher\patchers\HideModulePatcher.cpp" />
+    <ClCompile Include="src\base\patcher\PatcherManager.cpp" />
+    <ClCompile Include="src\base\patcher\patchers\ExitProcessPatcher.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\Debugger.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\ModuleCategoryButton.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\PageFrame.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\moduleListPage\ModuleInfo.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\pages\ModuleListsPage.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\SliderBar.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\component\components\TopBar.cpp" />
+    <ClCompile Include="src\base\render\screen\instance\GuiInstance.cpp" />
+    <ClCompile Include="src\base\features\modules\player\NoJumpDelay.cpp" />
+    <ClCompile Include="src\base\features\modules\visual\ChestESP.cpp" />
+    <ClCompile Include="src\base\render\screen\impl\GuiScreen.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\chat\Style.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\chat\TextColor.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\network\play\server\S12PacketEntityVelocity.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\world\inventory\ClickType.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\Vec3.h" />
+    <ClCompile Include="src\utils\jvm_utility.cpp" />
+    <ClCompile Include="src\utils\Memory.cpp" />
+    <ClCompile Include="src\base\features\modules\combat\KeepSprint.cpp" />
+    <ClCompile Include="src\base\features\modules\world\CaveFinder.cpp" />
+    <ClCompile Include="src\base\features\api\ClickApi.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\item\ItemAxe.cpp" />
     <ClCompile Include="src\base\sdk\wrapper\net\minecraft\item\ItemBow.cpp" />
     <ClCompile Include="src\base\features\api\JammingApi.cpp" />
     <ClCompile Include="src\base\protocol\packer.cpp" />
@@ -176,6 +337,7 @@
     <ClCompile Include="src\base\config\ConfigManager.cpp" />
     <ClCompile Include="src\base\features\api\InventoryUtils.cpp" />
     <ClCompile Include="src\base\features\modules\visual\BlockESP.cpp" />
+    <ClCompile Include="src\base\sdk\wrapper\net\minecraft\item\ItemSword.cpp" />
     <ClCompile Include="src\base\sdk\wrapper\net\minecraft\world\chunk\Chunk.cpp" />
     <ClCompile Include="src\base\sdk\hook\hooks\LevelHook.cpp" />
     <ClCompile Include="src\base\sdk\hook\hooks\ClientPacketListenerHook.cpp" />
@@ -232,13 +394,6 @@
     <ClCompile Include="src\base\render\nano\wrapper\gl3.cpp" />
     <ClCompile Include="src\base\render\nano\font\NanoVGFontRenderer.cpp" />
     <ClCompile Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\phys\AABB.h" />
-    <ClCompile Include="src\utils\animation\simple\SimpleAnimation.cpp" />
-    <ClCompile Include="src\base\render\gui\api\ScrollComponent.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\component\impl\settings\impl\BooleanValueComponent.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\component\impl\ModuleComponent.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\component\Component.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\component\impl\PanelComponent.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\NewClickGui.cpp" />
     <ClCompile Include="src\base\features\modules\combat\AimAssist.cpp" />
     <ClCompile Include="src\base\features\modules\player\AntiBot.cpp" />
     <ClCompile Include="src\base\features\modules\visual\ESP.cpp" />
@@ -299,15 +454,237 @@
     <ClCompile Include="src\base\sdk\mapper\SRGParser.cpp" />
     <ClCompile Include="src\base\features\modules\combat\Velocity.cpp" />
     <ClCompile Include="src\base\features\modules\player\Team.cpp" />
-    <ClCompile Include="src\base\render\gui\clickgui\component\impl\settings\ValueComponent.cpp" />
     <ClCompile Include="src\base\cleaner\UnloadedModuleCleaner.cpp" />
     <ClCompile Include="src\utils\types\details\WorldToScreen.cpp" />
     <ClCompile Include="src\utils\Wstr.cpp" />
     <ClCompile Include="src\base\sdk\wrapper\net\minecraft\world\World.cpp" />
     <ClCompile Include="src\base\sdk\wrapper\net\minecraft\util\Vec3i.cpp" />
     <ClCompile Include="src\base\render\gui\api\VirtualKey.cpp" />
+    <ClCompile Include="src\base\patcher\patchers\VEHAntiCrcPatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0APacketAnimation.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C02PacketUseEntity%24Action.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C02PacketUseEntity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0BPacketEntityAction%24Action.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\client\C0BPacketEntityAction.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\NetworkManager.h" />
+    <ClInclude Include="src\base\features\command\Command.h" />
+    <ClInclude Include="src\base\features\command\CommandManager.h" />
+    <ClInclude Include="src\base\features\command\commands\CommandTarget.h" />
+    <ClInclude Include="src\base\features\modules\movement\Blink.h" />
+    <ClInclude Include="src\base\features\modules\visual\Chams.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\ChatScreenHook.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\LivingEntityHook.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\SettingPage.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\setting\setting_button.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\EntityHook.h" />
+    <ClInclude Include="src\base\features\modules\combat\JumpReset.h" />
+    <ClInclude Include="src\base\features\modules\movement\AutoSprint.h" />
+    <ClInclude Include="src\base\features\modules\player\Stealer.h" />
+    <ClInclude Include="src\base\features\modules\visual\FullBright.h" />
+    <ClInclude Include="src\base\jvm\ripterms\javahook\Capstone.h" />
+    <ClInclude Include="src\base\jvm\ripterms\javahook\Hook.h" />
+    <ClInclude Include="src\base\jvm\ripterms\javahook\JavaHook.h" />
+    <ClInclude Include="src\base\jvm\ripterms\javahook\Module.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\LocalPlayerHook.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\MinecraftHook.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\block\state\IBlockState.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\client\renderer\ActiveRenderInfo.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\client\renderer\entity\RenderManager.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\item\ItemArmor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\block\Block.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\block\state\IBlockState.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\entity\AbstractClientPlayer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\entity\EntityPlayerSP.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\gui\GuiChat.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\gui\GuiScreen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\multiplayer\WorldClient.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\renderer\ActiveRenderInfo.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\renderer\entity\RenderManager.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\settings\GameSettings.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\settings\KeyBinding.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\entity\Entity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\entity\EntityLivingBase.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\entity\player\EntityPlayer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\entity\player\InventoryPlayer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\inventory\Container.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\inventory\ContainerChest.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\inventory\IInventory.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\EnumRarity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\Item.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemArmor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemAxe.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemBlock.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemBow.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemStack.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\item\ItemSword.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\network\play\server\SPacketEntityVelocity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\AxisAlignedBB.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\BlockPos.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\RayTraceResult$Type.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\RayTraceResult.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\Vec3d.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\math\Vec3i.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\MovementInput.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\NonNullList.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\text\ITextComponent.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\text\Style.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\text\TextFormatting.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\util\Timer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\world\IBlockAccess.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\world\World.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\client\gui\screens\inventory\InventoryScreen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\PacketListener.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundInteractPacket$Action.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundInteractPacket$ActionType.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundInteractPacket.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundPlayerCommandPacket$Action.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundPlayerCommandPacket.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ServerboundSwingPacket.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\com\mojang\blaze3d\platform\InputConstants$Key.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\ChatFormatting.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\KeyMapping.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\OptionInstance.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\inventory\Container.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\inventory\ContainerChest.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\inventory\IInventory.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\multiplayer\PlayerController.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\Packet.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\ValueComponent.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\BooleanValueComponent.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\ColorValueComponent.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\FloatValueComponent.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\IntValueComponent.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\value\ModeValueComponent.h" />
+    <ClInclude Include="src\base\sdk\hook\hooks\ConnectionHook.h" />
+    <ClInclude Include="src\base\features\modules\visual\TargetHud.h" />
+    <ClInclude Include="src\base\patcher\patchers\HideModulePatcher.h" />
+    <ClInclude Include="src\base\patcher\AbstractPatcher.h" />
+    <ClInclude Include="src\base\patcher\PatcherManager.h" />
+    <ClInclude Include="src\base\patcher\patchers\ExitProcessPatcher.h" />
+    <ClInclude Include="ext\gzip\compress.hpp" />
+    <ClInclude Include="ext\gzip\config.hpp" />
+    <ClInclude Include="ext\gzip\decompress.hpp" />
+    <ClInclude Include="ext\gzip\utils.hpp" />
+    <ClInclude Include="ext\gzip\version.hpp" />
+    <ClInclude Include="ext\zlib\zconf.h" />
+    <ClInclude Include="ext\zlib\zlib.h" />
+    <ClInclude Include="src\base\render\resources\fonts\GreycliffCF_Light.h" />
+    <ClInclude Include="src\base\render\resources\fonts\material_icon.h" />
+    <ClInclude Include="src\base\render\resources\image\watermark.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\Component.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\Debugger.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\ModuleCategoryButton.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\PageFrame.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\moduleListPage\ModuleInfo.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\pages\ModuleListsPage.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\SliderBar.h" />
+    <ClInclude Include="src\base\render\screen\impl\component\components\TopBar.h" />
+    <ClInclude Include="src\base\render\screen\instance\GuiInstance.h" />
+    <ClInclude Include="src\base\features\modules\player\NoJumpDelay.h" />
+    <ClInclude Include="src\base\features\modules\visual\ChestESP.h" />
+    <ClInclude Include="src\base\render\screen\AbstractScreen.h" />
+    <ClInclude Include="src\base\render\screen\impl\GuiScreen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\chat\Style.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\chat\TextColor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\network\play\server\S12PacketEntityVelocity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\world\inventory\ClickType.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_12_2\net\minecraft\client\Minecraft.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraftforge\common\ForgeHooks.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\client\Minecraft.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\client\multiplayer\MultiPlayerGameMode.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\Connection.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ClientboundSetEntityMotionPacket.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\Packet.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\Container.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\inventory\AbstractContainerMenu.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\inventory\ChestMenu.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\inventory\ClickType.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\level\entity\EntityAccess.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\level\LevelWriter.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\Nameable.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\gui\screens\ChatScreen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\gui\screens\Screen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\multiplayer\MultiPlayerGameMode.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\Options.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\client\player\Input.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\core\Vec3i.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\network\chat\Style.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\network\chat\TextColor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\network\protocol\game\ClientboundSetEntityMotionPacket.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\Container.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\entity\item\ItemEntity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\inventory\AbstractContainerMenu.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\inventory\ChestMenu.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\inventory\ClickType.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\AxeItem.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\BlockItem.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\BowItem.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\DyeColor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\Rarity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\item\SwordItem.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\level\BlockGetter.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\level\ChunkPos.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\level\chunk\ChunkAccess.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\level\chunk\LevelChunk.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\level\entity\EntityAccess.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\Nameable.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\AABB.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\BlockHitResult.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\EntityHitResult.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\HitResult$Type.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\HitResult.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_20_4\net\minecraft\client\MinecraftClient.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\block\state\BlockState.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\block\state\IBlockState.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\gui\GuiChat.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\gui\GuiScreen.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\renderer\ActiveRenderInfo.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\renderer\entity\RenderManager.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\settings\GameSettings.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\settings\KeyBinding.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\command\ICommandSender.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\chat\Style.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\chat\TextColor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\block\Block.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\entity\EntityPlayerSP.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\entity\player\InventoryPlayer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\inventory\Container.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\inventory\ContainerChest.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\inventory\IInventory.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\EnumRarity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\Item.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemArmor.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemAxe.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemBlock.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemBow.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemStack.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\Minecraft.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\client\multiplayer\WorldClient.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\item\ItemSword.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\network\play\server\S12PacketEntityVelocity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\ChatStyle.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\EnumChatFormatting.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\Timer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\world\World.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\entity\Entity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\entity\EntityLivingBase.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\entity\player\EntityPlayer.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\AxisAlignedBB.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\BlockPos.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\IChatComponent.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\MovementInput.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\MovingObjectPosition$MovingObjectType.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\MovingObjectPosition.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_8_9\net\minecraft\util\Vec3i.h" />
+    <ClInclude Include="src\log\LOG.h" />
+    <ClInclude Include="src\utils\jvm_utility.h" />
+    <ClInclude Include="src\utils\Memory.h" />
+    <ClInclude Include="src\base\features\modules\combat\KeepSprint.h" />
+    <ClInclude Include="src\base\features\modules\world\CaveFinder.h" />
+    <ClInclude Include="src\base\features\api\ClickApi.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\item\ItemAxe.h" />
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\item\ItemBow.h" />
     <ClInclude Include="src\base\features\api\JammingApi.h" />
     <ClInclude Include="src\base\protocol\packer.h" />
@@ -318,50 +695,65 @@
     <ClInclude Include="src\base\jvm\jni\types\Array.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\Field.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\Env.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\Klass.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\Method.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\Misc.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="src\base\jvm\jni\types\ObjectWrapper.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">true</DeploymentContent>
     </ClInclude>
     <ClInclude Include="ext\json.hpp" />
     <ClInclude Include="src\base\config\ConfigManager.h" />
     <ClInclude Include="src\base\features\api\InventoryUtils.h" />
     <ClInclude Include="src\base\features\modules\visual\BlockESP.h" />
     <ClInclude Include="src\base\features\api\AbstractBlockLocationTracker.h" />
+    <ClInclude Include="src\base\sdk\wrapper\net\minecraft\item\ItemSword.h" />
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\world\chunk\Chunk.h" />
     <ClInclude Include="src\base\sdk\hook\hooks\LevelHook.h" />
     <ClInclude Include="src\base\features\api\chunk\ChunkSharedFlag.h" />
@@ -687,6 +1079,7 @@
     <ClInclude Include="src\base\GitInfo.h" />
     <ClInclude Include="src\base\jvm\hotspot\classes\compile_task.h" />
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\util\MovementInput.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\com\mojang\blaze3d\platform\InputConstants$Key.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\com\mojang\blaze3d\platform\Window.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\com\mojang\blaze3d\vertex\PoseStack$Pose.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\com\mojang\blaze3d\vertex\PoseStack.h" />
@@ -731,7 +1124,6 @@
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\util\MovingObjectPosition.h" />
     <ClInclude Include="src\base\sdk\wrapper\Object.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\client\gui\screens\Screen.h" />
-    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\client\MInecraft.h" />
     <ClInclude Include="src\base\render\nano\wrapper\gl2.h" />
     <ClInclude Include="src\base\render\nano\wrapper\gl3.h" />
     <ClInclude Include="src\base\features\modules\combat\AutoClicker.h" />
@@ -753,6 +1145,7 @@
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ClientboundLightUpdatePacketData.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\network\protocol\game\ClientboundSectionBlocksUpdatePacket.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\resources\ResourceLocation.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\AxeItem.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\BlockItem.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\entity\item\ItemEntity.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\entity\player\Inventory.h" />
@@ -770,6 +1163,7 @@
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\Item.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\ItemStack.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\Rarity.h" />
+    <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\item\SwordItem.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\level\block\Block.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\level\block\entity\BedBlockEntity.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_18_1\net\minecraft\world\level\block\entity\BlockEntity.h" />
@@ -814,13 +1208,6 @@
     <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\Vec2.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\net\minecraft\world\phys\Vec3.h" />
     <ClInclude Include="src\base\sdk\wrapper\versions\1_20_1\org\joml\Matrix4f.h" />
-    <ClInclude Include="src\utils\animation\simple\SimpleAnimation.h" />
-    <ClInclude Include="src\base\render\gui\api\ScrollComponent.h" />
-    <ClInclude Include="src\base\render\gui\clickgui\component\impl\settings\impl\BooleanValueComponent.h" />
-    <ClInclude Include="src\base\render\gui\clickgui\component\impl\ModuleComponent.h" />
-    <ClInclude Include="src\base\render\gui\clickgui\component\Component.hpp" />
-    <ClInclude Include="src\base\render\gui\clickgui\component\impl\PanelComponent.h" />
-    <ClInclude Include="src\base\render\gui\clickgui\NewClickGui.h" />
     <ClInclude Include="src\base\features\modules\combat\AimAssist.h" />
     <ClInclude Include="src\base\features\modules\player\AntiBot.h" />
     <ClInclude Include="src\base\features\modules\visual\ESP.h" />
@@ -868,8 +1255,7 @@
     <ClInclude Include="src\base\render\gui\nanogui\Window.h" />
     <ClInclude Include="src\base\render\resources\fonts\entypo.h" />
     <ClInclude Include="src\base\render\resources\fonts\harmony_sc_bold.h" />
-    <ClInclude Include="src\utils\animation\Animation.hpp" />
-    <ClInclude Include="src\utils\animation\Easing.hpp" />
+    <ClInclude Include="src\utils\animation\Animation.h" />
     <ClInclude Include="src\utils\function_traits.hpp" />
     <ClInclude Include="src\base\features\modules\ModuleManager.h" />
     <ClInclude Include="src\base\features\modules\visual\HUD.h" />
@@ -902,18 +1288,19 @@
     <ClInclude Include="src\utils\Pattern.h" />
     <ClInclude Include="src\utils\render.h" />
     <ClInclude Include="src\utils\strutils.h" />
+    <ClInclude Include="src\utils\Thread.h" />
     <ClInclude Include="src\utils\TimerUtil.hpp" />
     <ClInclude Include="src\utils\types\Maths.hpp" />
     <ClInclude Include="src\base\sdk\mapper\SRGParser.h" />
     <ClInclude Include="src\utils\Wnd.h" />
     <ClInclude Include="src\base\features\modules\combat\Velocity.h" />
     <ClInclude Include="src\base\features\modules\player\Team.h" />
-    <ClInclude Include="src\base\render\gui\clickgui\component\impl\settings\ValueComponent.h" />
     <ClInclude Include="src\base\cleaner\UnloadedModuleCleaner.h" />
     <ClInclude Include="src\utils\Wstr.h" />
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\world\World.h" />
     <ClInclude Include="src\base\sdk\wrapper\net\minecraft\util\Vec3i.h" />
     <ClInclude Include="src\base\render\gui\api\VirtualKey.h" />
+    <ClInclude Include="src\base\patcher\patchers\VEHAntiCrcPatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="src\base\jvm\hotspot\utility\getter.asm">
@@ -1058,7 +1445,11 @@
     <None Include="ext\glm\gtx\vector_angle.inl" />
     <None Include="ext\glm\gtx\vector_query.inl" />
     <None Include="ext\glm\gtx\wrap.inl" />
+    <None Include="src\base\sdk\mapper\resources\maps\forge112.srg" />
     <None Include="src\base\sdk\mapper\resources\maps\forge1201.srg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="ext\zlib\zlibstat.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,14 @@ public:
 	using Object::Object;
 	float getFov();
 	void setShiftKeyPressed(bool value);
-
+	bool getShiftKeyPressed();
+	int getAttackKey();
+	int getUseKey();
+	void setToggleSprint(bool value);
+	bool getToggleSprint();
+	void setGamma(double value);
+	double getGamma();
+	void setSprintKeyPressed(bool value);
+	int getThirdPersonView();
 };
 END_WRAP

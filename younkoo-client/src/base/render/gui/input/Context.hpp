@@ -69,7 +69,7 @@ struct YounkooIOContext {
 };
 class YounkooInput : public YounkooIOContext {
 public:
-	bool IsMousePressed(const unsigned int button, const bool repeat = true) {
+	inline bool IsMousePressed(const unsigned int button, const bool repeat = true) {
 		if (MouseDown[button])
 		{
 			if (!MouseDownAready[button])
@@ -87,7 +87,7 @@ public:
 		return false;
 	}
 
-	bool IsKeyPressed(const unsigned int keyCode, const bool repeat = true) {
+	inline bool IsKeyPressed(const unsigned int keyCode, const bool repeat = true) {
 
 		if (KeysDown[keyCode])
 		{
@@ -105,7 +105,7 @@ public:
 		}
 		return false;
 	}
-	bool MouseInZone(const Math::Vector2D& pos, const Math::Vector2D& size) const
+	inline bool MouseInZone(const Math::Vector2D& pos, const Math::Vector2D& size) const
 	{
 		const Math::Vector2D& cursor_pos = MousePos;
 
@@ -114,8 +114,9 @@ public:
 				return true;
 		return false;
 	}
-	void EndFrame() {
+	inline void EndFrame() {
 		this->MouseWheel = this->MouseWheelH = 0.0f;
 		this->InputQueueCharacters.resize(0);
 	}
-}inline context;
+}inline inputContext;
+

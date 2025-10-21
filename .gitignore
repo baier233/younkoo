@@ -4,8 +4,6 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 
-younkoo-client/src/base/sdk/mapper/resources/maps/forge1181.h
-
 # User-specific files
 *.rsuser
 *.suo
@@ -32,7 +30,6 @@ x86/
 bld/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
 [Ll]ogs/
 
 # Visual Studio 2015/2017 cache/options directory

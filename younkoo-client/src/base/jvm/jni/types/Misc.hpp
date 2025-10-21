@@ -6,7 +6,7 @@
 #include <shared_mutex> 
 #include <iostream>
 
-//#define LOG
+#define LOG(CONTENT)
 namespace JNI {
 
 
@@ -62,7 +62,7 @@ namespace JNI {
 		{
 			std::shared_lock shared_lock{ class_name_cache<klass_type>::mutex };
 			class_name_cache<klass_type>::value = name;
-			std::cout << "set_cached_name Class type: " << typeid(klass_type).name() << " name: " << name << std::endl;
+			LOG("set_cached_name Class type: " << typeid(klass_type).name() << " name: " << name);
 		}
 	}
 	template<class klass_type> inline std::string get_cached_name() //findClass
@@ -71,7 +71,7 @@ namespace JNI {
 		{
 			std::shared_lock shared_lock{ class_name_cache<klass_type>::mutex };
 
-			std::cout << "get_cached_name Class type: " << typeid(klass_type).name() << " name: " << cached << std::endl;
+			LOG("get_cached_name Class type: " << typeid(klass_type).name() << " name: " << cached);
 			if (cached != "e") return cached;
 		}
 		auto klassName = klass_type::get_name_from_lambda();

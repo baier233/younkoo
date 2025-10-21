@@ -7,20 +7,38 @@
 #include "combat/TriggerBot.h"
 #include "combat/AimAssist.h"
 #include "combat/KillAura.h"
+#include "combat/Jamming.h"
+#include "combat/Velocity.h"
+#include "combat/JumpReset.h"
+#include "combat/KeepSprint.h"
 
 //Visual
 #include "visual/HUD.h"
 #include "visual/ESP.h"
 #include "visual/NameTag.h"
+#include "visual/ItemESP.h"
+#include "visual/BlockESP.h"
+#include "visual/ChestESP.h"
+#include "visual/TargetHud.h"
+#include "visual/FullBright.h"
+#include "visual/Chams.h"
 
 //Player
 #include "player/Eagle.h"
 #include "player/Team.h"
 #include "player/AutoTool.h"
-#include "visual/ItemESP.h"
-#include "visual/BlockESP.h"
 #include "player/HitDelayFix.h"
 #include "player/FastPlace.h"
+#include "player/NoJumpDelay.h"
+#include "player/Stealer.h"
+#include "player/AntiBot.h"
+
+//World
+#include "world/CaveFinder.h"
+
+//Movement
+#include "movement/AutoSprint.h"
+#include "movement/Blink.h"
 ModuleManager::ModuleManager() {
 
 }
@@ -41,7 +59,7 @@ AbstractModule* ModuleManager::getModule(std::string name) {
 			return ToBaseModule(*iter);
 		}
 	}
-	std::cout << "Module not found!!!" << std::endl;
+	LOG("Module not found!!!");
 	return nullptr;
 }
 
@@ -62,8 +80,15 @@ void ModuleManager::ProcessKeyEvent(int key) {
 }
 
 void ModuleManager::ProcessUpdate() {
+
 	for (auto iter = this->modules.cbegin(); iter < this->modules.cend(); iter++) {
-		if (ToBaseModule(*iter)->getToggle()) ToBaseModule(*iter)->onUpdate();
+
+		if (ToBaseModule(*iter)->getToggle()) {
+			(void)JNI::get_env()->PushLocalFrame(99);
+			ToBaseModule(*iter)->onUpdate();
+			(void)JNI::get_env()->PopLocalFrame(nullptr);
+		}
+
 	}
 }
 
@@ -76,27 +101,56 @@ bool ModuleManager::LoadModules()
 {
 	{/*Visual*/
 		this->addModule<HUD>(&HUD::getInstance());
+		this->addModule<CaveFinder>(&CaveFinder::getInstance());
+		this->addModule<FullBright>(&FullBright::getInstance());
 		this->addModule<ESP>(&ESP::getInstance());
-		this->addModule<AimAssist>(&AimAssist::getInstance());
-		this->addModule<ItemESP>(&ItemESP::getInstance());
-		//this->addModule <BlockESP >(&BlockESP::getInstance());
+		if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1 || SRGParser::get().GetVersion() == Versions::FORGE_1_20_1)
+		{
+			this->addModule<TargetHud>(&TargetHud::getInstance());
+			this->addModule<NameTag>(&NameTag::getInstance());
+			this->addModule<ItemESP>(&ItemESP::getInstance());
+		}
+		else {
+			this->addModule<ChestESP>(&ChestESP::getInstance());
+			this->addModule<Chams>(&Chams::getInstance());
+		}
+		this->addModule <BlockESP >(&BlockESP::getInstance());
 	}
 
 	{/*Combat*/
 
 		this->addModule<AutoClicker>(&AutoClicker::getInstance());
-		this->addModule<TriggerBot>(&TriggerBot::getInstance());
-		this->addModule<NameTag>(&NameTag::getInstance());
 		this->addModule<KillAura>(&KillAura::getInstance());
+		this->addModule<AimAssist>(&AimAssist::getInstance());
+		this->addModule<Jamming>(&Jamming::getInstance());
+		if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1 || SRGParser::get().GetVersion() == Versions::FORGE_1_20_1) {
+			this->addModule<TriggerBot>(&TriggerBot::getInstance());
+			this->addModule<KeepSprint>(&KeepSprint::getInstance());
+		}
+		this->addModule<Velocity>(&Velocity::getInstance());
+		//this->addModule<JumpReset>(&JumpReset::getInstance());
 	}
 
 	{/*Player*/
 
-		this->addModule<Eagle>(&Eagle::getInstance());
-		this->addModule<Team>(&Team::getInstance());
-		this->addModule<AutoTool>(&AutoTool::getInstance());
+
 		this->addModule<FastPlace>(&FastPlace::getInstance());
 		this->addModule<HitDelayFix>(&HitDelayFix::getInstance());
+		this->addModule<NoJumpDelay>(&NoJumpDelay::getInstance());
+		this->addModule<Eagle>(&Eagle::getInstance());
+		this->addModule<Team>(&Team::getInstance());
+		this->addModule<Antibot>(&Antibot::getInstance());
+		this->addModule<AutoTool>(&AutoTool::getInstance());
+		if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1 || SRGParser::get().GetVersion() == Versions::FORGE_1_20_1) {
+			this->addModule<Stealer>(&Stealer::getInstance());
+		}
+	}
+
+
+	{/*Movement*/
+		this->addModule<AutoSprint>(&AutoSprint::getInstance());
+		//this->addModule<Blink>(&Blink::getInstance());
+
 	}
 	return true;
 }

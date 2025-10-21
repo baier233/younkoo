@@ -123,6 +123,8 @@ namespace java_hotspot {
 		};
 		auto get_constants() -> const_pool*;
 
+		auto set_constants(const_pool* cp) -> void;
+
 		auto get_code_size() -> unsigned short;
 
 		auto get_name_index() -> unsigned short;

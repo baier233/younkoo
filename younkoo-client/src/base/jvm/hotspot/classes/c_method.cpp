@@ -14,6 +14,13 @@ auto java_hotspot::const_method::get_constants() -> const_pool* {
 	return *reinterpret_cast<const_pool**>(reinterpret_cast<uint8_t*>(this) + _constants_entry->offset);
 }
 
+auto java_hotspot::const_method::set_constants(const_pool* cp) -> void
+{
+	static VMStructEntry* _constants_entry = JVMWrappers::find_type_fields("ConstMethod").value().get()["_constants"];
+	if (!_constants_entry) return;
+	*reinterpret_cast<const_pool**>(reinterpret_cast<uint8_t*>(this) + _constants_entry->offset) = cp;
+}
+
 unsigned short java_hotspot::const_method::get_code_size() {
 	static VMStructEntry* _code_size_entry = JVMWrappers::find_type_fields("ConstMethod").value().get()["_code_size"];
 	if (!_code_size_entry) return 0;

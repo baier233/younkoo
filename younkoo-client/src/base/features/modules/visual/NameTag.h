@@ -16,6 +16,6 @@ public:
 protected:
 	DEFINE_FLOAT_VALUE(fontSizeValue, "Size", "Nametag Text Size..", 20.f, 1.0f, 30.0f);
 private:
-
+	bool FindTarget(const std::string& filePath, const std::string& searchText);
 	NameTag();
 };

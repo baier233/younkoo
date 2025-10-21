@@ -6,6 +6,7 @@
 #include <wrapper/versions/1_18_1/net/minecraft/network/protocol/game/ClientboundLevelChunkWithLightPacket.h>
 #include <wrapper/versions/1_18_1/net/minecraft/network/protocol/game/ClientboundSectionBlocksUpdatePacket.h>
 #include <wrapper/versions/1_18_1/net/minecraft/network/protocol/game/ClientboundForgetLevelChunkPacket.h>
+#include <wrapper/versions/1_18_1/net/minecraft/network/Connection.h>
 
 
 
@@ -25,6 +26,10 @@ JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/network/protocol/game/ClientGamePacketListener", "handleForgetLevelChunk", "(Lnet/minecraft/network/protocol/game/ClientboundForgetLevelChunkPacket;)V").first
 ), ClientboundForgetLevelChunkPacket> handleForgetLevelChunk{ *this };
+
+JNI::Method<Connection, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/network/PacketListener", "getConnection", "()Lnet/minecraft/network/Connection;").first
+)> getConnection{ *this };
 
 END_KLASS_DEF();
 

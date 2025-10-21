@@ -4,14 +4,17 @@
 #include "../render/gui/GUI.h"
 
 #include <base/features/modules/ModuleManager.h>
-
 #include <base/render/gui/input/InputApi.h>
 #include <base/features/modules/common/CommonData.h>
 #include <base/features/modules/player/Team.h>
+#include <utils/Wstr.h>
+
 #include <random>
+#include <base/features/modules/visual/TargetHud.h>
 
 static long lastClickTime = 0;
 static int nextCps = 10;
+
 static double distance(double x, double y) {
 	return sqrt(pow(x, 2) + pow(y, 2));
 }
@@ -20,7 +23,8 @@ static double distance(double x1, double y1, double z1, double x2, double y2, do
 	return distance(y1 - y2, distance(x1 - x2, z1 - z2));
 }
 using namespace InputApi;
-KillAura::KillAura() :AbstractModule(xorstr_("KillAura"), Category::COMBAT, 'R')
+
+KillAura::KillAura() :AbstractModule(xorstr_("KillAura"), Category::COMBAT, xorstr_("Legit Aura."), 'R')
 {
 
 	this->addValue(FloatType, rangeValue);
@@ -30,6 +34,9 @@ KillAura::KillAura() :AbstractModule(xorstr_("KillAura"), Category::COMBAT, 'R')
 	this->addValue(FloatType, smoothValue);
 	this->addValue(BoolType, keepSprintValue);
 	this->addValue(BoolType, autoBlockValue);
+	this->addValue(BoolType, canAttackCheckValue);
+	this->addValue(BoolType, breakBlockCheckValue);
+
 	this->addValue(ListType, killauraMode);
 	this->addValue(ListType, targetPriorityListMode);
 	REGISTER_EVENT(EventRender2D, KillAura::onRender2D);
@@ -45,33 +52,41 @@ KillAura& KillAura::getInstance()
 void KillAura::onEnable()
 {
 }
-
 void KillAura::onDisable()
 {
-
+	TargetHud::getInstance().clear = true;
 }
 
 void KillAura::onRender2D(const EventRender2D& e)
 {
 	ToggleCheck;
-	if (NanoGui::available) return;
 
+	if (NanoGui::available) return;
 }
+
+#include <base/features/api/ClickApi.h>
+#include <base/features/modules/player/AntiBot.h>
+#include "Jamming.h"
+#include <utils/TimerUtil.hpp>
+using namespace ClickApi;
+
 
 void KillAura::onUpdate()
 {
 	ToggleCheck;
 	auto mc = Wrapper::Minecraft::getMinecraft();
 	if (NanoGui::available || mc.isInGuiState()) return;
+	if (breakBlockCheckValue->getValue() && Wrapper::Minecraft().getPlayerController().isHittingBlock()) return;
+
 	auto fov = fovValue->getValue();
 	auto smooth = smoothValue->getValue();
 	auto thePlayer = mc.getPlayer();
 	auto level = mc.getWorld();
 
 	Math::Vector3D headPos = thePlayer.getPosition() + Math::Vector3D{ 0,thePlayer.getEyeHeight(),0 };
-	Math::Vector2 currentLookAngles = thePlayer.getAngles();
+	Math::Rotation currentLookRot = thePlayer.getAngles();
+	Math::Vector2 currentLookAngles = { .x = currentLookRot.yRot,.y = currentLookRot.xRot };
 
-	Wrapper::EntityPlayer target{};
 	float finalDist = FLT_MAX;
 	float finalDiff = 370;
 	float finalHealth = FLT_MAX;
@@ -79,13 +94,15 @@ void KillAura::onUpdate()
 	float realAimDistance = rangeValue->getValue();
 
 	auto players = level.getPlayerList();
+	Wrapper::EntityPlayer target{};
 
 	for (auto& player : players)
 	{
 		if (player.isNULL()) continue;
 		if (player.isEqualTo(thePlayer)) continue;
 
-		if (player.getDisplayName().length() < 0) return;
+
+		if (player.getDisplayName().length() <= 0) return; 
 
 		float playerHeight = player.getEyeHeight();
 
@@ -102,6 +119,17 @@ void KillAura::onUpdate()
 		float dist = sqrt(pow(diff.x, 2) + pow(diff.y, 2) + pow(diff.z, 2));
 		if ((abs(difference.x) <= fov) && dist <= realAimDistance)
 		{
+			if (player.isNULL() || Team::getInstance().isSameTeam(player))
+			{
+				continue;
+			}
+			if (Younkoo::get().info.major <= MajorVersion::MAJOR_112)
+			{
+				if (Antibot::getInstance().isBot(player))
+				{
+					continue;
+				}
+			}
 			float health = player.getHealth();
 			switch (this->targetPriorityListMode->getValue())
 			{
@@ -118,6 +146,7 @@ void KillAura::onUpdate()
 				{
 					target = player;
 					finalDiff = difference.x;
+
 				}
 				break;
 			default:
@@ -125,17 +154,44 @@ void KillAura::onUpdate()
 				{
 					target = player;
 					finalDist = (float)dist;
+
 				}
 			}
+
+
 		}
 	}
 
 	if (target.isNULL()) {
+		TargetHud::getInstance().clear = true;
 		return;
 	}
-	if (thePlayer.isSameTeam(target)) return;
+	else {
+		TargetHud::getInstance().clear = false;
+	}
 
+
+	if (Team::getInstance().isSameTeam(target)) return;
+
+	TargetHud::getInstance().renderTarget = target;
+	if (canAttackCheckValue->getValue() && !thePlayer.canEntityBeSeen(target))
+	{
+		return;
+	}
 	float renderPartialTicks = CommonData::get().renderPartialTicks;
+	static TimerUtil jammingTimer;
+	if (Jamming::getInstance().getToggle() && Younkoo::get().info.major <= MajorVersion::MAJOR_112)
+	{
+		if (jammingTimer.hasTimeElapsed(500, true))
+		{
+			auto uuid = target.getUUID();
+			if (uuid.empty()) return;
+			Jamming::asyncJammingPlayer(uuid);
+		}
+
+	}
+
+
 
 	if (this->killauraMode->getValue() == Legit) {
 
@@ -183,9 +239,6 @@ void KillAura::onUpdate()
 			thePlayer.setAngles(Math::Vector2(targetYaw, currentLookAngles.y + 0));
 		}
 	}
-	if (target.isNULL()) {
-		return;
-	}
 
 	/*if (keepSprintValue->getValue() && thePlayer.getMoveForward() != 0) {
 		thePlayer.setSprint(true);
@@ -197,8 +250,8 @@ void KillAura::onUpdate()
 	if (this->killauraMode->getValue() == Legit) {
 		POINT pos_cursor;
 		GetCursorPos(&pos_cursor);
-		SendMessageNoEvent(renderer.renderContext.HandleWindow, WM_LBUTTONDOWN, MK_LBUTTON, MAKELPARAM(pos_cursor.x, pos_cursor.y));
-		SendMessageNoEvent(renderer.renderContext.HandleWindow, WM_LBUTTONUP, 0, MAKELPARAM(pos_cursor.x, pos_cursor.y));
+		GenricMCClick(MouseType::LEFT, ClickType::DOWN);
+		GenricMCClick(MouseType::LEFT, ClickType::UP);
 	}
 	//else if (this->killauraMode->getValue() == Normal) {
 	//	//thePlayer.swingItem();
@@ -208,9 +261,9 @@ void KillAura::onUpdate()
 	if (autoBlockValue->getValue() == true && this->killauraMode->getValue() == Legit) {
 		POINT pos_cursor;
 		GetCursorPos(&pos_cursor);
-		std::cout << target.getHealth() << std::endl;
-		SendMessageNoEvent(renderer.renderContext.HandleWindow, WM_RBUTTONDOWN, MK_RBUTTON, MAKELPARAM(pos_cursor.x, pos_cursor.y));
-		SendMessageNoEvent(renderer.renderContext.HandleWindow, WM_RBUTTONUP, 0, MAKELPARAM(pos_cursor.x, pos_cursor.y));
+		LOG(target.getHealth());
+		GenricMCClick(MouseType::RIGHT, ClickType::DOWN);
+		GenricMCClick(MouseType::RIGHT, ClickType::UP);
 		/*if (isMove())
 			thePlayer.set_speed(0.155);*/
 	}
@@ -218,7 +271,7 @@ void KillAura::onUpdate()
 		POINT pos_cursor;
 		GetCursorPos(&pos_cursor);
 
-		SendMessageNoEvent(renderer.renderContext.HandleWindow, WM_RBUTTONDOWN, MK_RBUTTON, MAKELPARAM(pos_cursor.x, pos_cursor.y));
+		GenricMCClick(MouseType::RIGHT, ClickType::DOWN);
 
 	}
 
@@ -231,3 +284,4 @@ void KillAura::onUpdate()
 	nextCps = distrib(gen);
 }
 
+	

@@ -85,14 +85,6 @@ JNI::Method<String, JNI::NOT_STATIC, DECLARE_NAME(
 return SRGParser::get().getObfuscatedMethodName("net/minecraft/resources/ResourceLocation", "toShortLanguageKey", "()Ljava/lang/String;").first
 )> toShortLanguageKey{ *this};
 
-JNI::Method<String, JNI::NOT_STATIC, DECLARE_NAME(
-return SRGParser::get().getObfuscatedMethodName("net/minecraft/resources/ResourceLocation", "toLanguageKey", "(Ljava/lang/String;)Ljava/lang/String;").first
-),String> toLanguageKey{ *this};
-
-JNI::Method<String, JNI::NOT_STATIC, DECLARE_NAME(
-return SRGParser::get().getObfuscatedMethodName("net/minecraft/resources/ResourceLocation", "toLanguageKey", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;").first
-),String,String> toLanguageKey{ *this};
-
 JNI::Method<jboolean, JNI::STATIC, DECLARE_NAME(
 return SRGParser::get().getObfuscatedMethodName("net/minecraft/resources/ResourceLocation", "isAllowedInResourceLocation", "(C)Z").first
 ),jchar> isAllowedInResourceLocation{ *this};

@@ -7,6 +7,8 @@
 
 #include <functional>
 #include <map>
+#include <vector>
+
 
 #include "../include_header.h"
 #include <titan_hook.h>
@@ -58,6 +60,10 @@ namespace jvm_break_points {
 	auto remove_all_breakpoints(
 		java_hotspot::method* method
 	) -> void;
+
+	auto remove_all_breakpoints_cleaned(
+		java_hotspot::method* method
+	) -> std::vector<std::pair<uint8_t*, uint8_t>>;
 }
 
 

@@ -30,8 +30,12 @@ protected:
 	DEFINE_BOOL_VALUE(blockHitValue, "Block Hit", "Hit with automatically right click.", false);
 	DEFINE_FLOAT_VALUE(blockHitChanceValue, "BlockHit Chance", "Automatically right click chance. ", 3, 1, 50);
 
+	DEFINE_BOOL_VALUE(doubleClickValue, "Double Click", "Make your CPS in Practice lower.", false);
+	DEFINE_BOOL_VALUE(doubleClickMistakeValue, "DoubleClick Mistake", "Lower click frequence when double click is failed.", true);
+	DEFINE_FLOAT_VALUE(doubleClickChanceValue, "DoubleClick Chance", "Automatically double click chance. ", 60, 20, 100);
+
 	DEFINE_BOOL_VALUE(inInventoryValue, "Inventory", "Still effective when inventory screen is open.", false);
-	DEFINE_BOOL_VALUE(blockOnlyValue, "Right Block Only", "Only do right click when current item is Block.", false);
+	DEFINE_BOOL_VALUE(blockOnlyValue, "Right Block Only", "Only do right click when current item is Block.", true);
 	DEFINE_BOOL_VALUE(ignoreBowValue, "Right Ignore Bow", "Skip when current item is Bow.", true);
 
 	std::shared_ptr<ModeValue>clickModeValue = std::make_shared<ModeValue>("Mode", "Click Mode.", std::vector<int>{ BOTH, LEFTONLY, RIGHTONLY }, std::vector<std::string>{ "Both", "Left Only", "Right Only" }, BOTH);

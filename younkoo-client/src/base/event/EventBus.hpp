@@ -12,7 +12,7 @@
 
 #include "../../utils/function_traits.hpp"
 
-namespace dp {
+namespace dxg {
 	class EventBus;
 
 	/**
@@ -24,7 +24,7 @@ namespace dp {
 	 */
 	class handler_registration {
 		const void* handle_{ nullptr };
-		dp::EventBus* EventBus_{ nullptr };
+		dxg::EventBus* EventBus_{ nullptr };
 
 	public:
 		handler_registration(const handler_registration& other) = delete;
@@ -44,7 +44,7 @@ namespace dp {
 		void unregister() noexcept;
 
 	protected:
-		handler_registration(const void* handle, dp::EventBus* bus);
+		handler_registration(const void* handle, dxg::EventBus* bus);
 		friend class EventBus;
 	};
 
@@ -230,7 +230,7 @@ namespace dp {
 		}
 	}
 
-	inline handler_registration::handler_registration(const void* handle, dp::EventBus* bus)
+	inline handler_registration::handler_registration(const void* handle, dxg::EventBus* bus)
 		: handle_(handle), EventBus_(bus) {}
 
 	inline handler_registration::handler_registration(handler_registration&& other) noexcept
@@ -245,4 +245,4 @@ namespace dp {
 	}
 
 	inline handler_registration::~handler_registration() { unregister(); }
-}  // namespace dp
+}  // namespace dxg

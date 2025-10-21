@@ -22,7 +22,8 @@ enum class Category : unsigned int {
 	MOVEMENT,
 	PLAYER,
 	VISUAL,
-	MISC
+	WORLD,
+	SETTING
 };
 
 inline std::string getCategoryName(Category category) {
@@ -33,12 +34,52 @@ inline std::string getCategoryName(Category category) {
 		return "MOVEMENT";
 	case Category::PLAYER:
 		return "PLAYER";
-	case Category::MISC:
-		return "MISC";
+	case Category::WORLD:
+		return "WORLD";
 	case Category::VISUAL:
 		return "VISUAL";
+	case Category::SETTING:
+		return "SETTING";
 	default:
 		return "UNKNOWN";
+	}
+}
+
+inline std::wstring getCategoryDisplayName(Category category) {
+	switch (category) {
+	case Category::COMBAT:
+		return L"Combat";
+	case Category::MOVEMENT:
+		return L"Movement";
+	case Category::PLAYER:
+		return L"Player";
+	case Category::WORLD:
+		return L"World";
+	case Category::VISUAL:
+		return L"Visual";
+	case Category::SETTING:
+		return L"Setting";
+	default:
+		return L"UNKNOWN";
+	}
+}
+
+inline std::wstring getCategoryIcon(Category category) {
+	switch (category) {
+	case Category::COMBAT:
+		return L"\uE9DB";
+	case Category::MOVEMENT:
+		return L"\uEB34";
+	case Category::PLAYER:
+		return L"\uEBAD";
+	case Category::WORLD:
+		return L"\uEBB1";
+	case Category::VISUAL:
+		return L"\uEAE1";
+	case Category::SETTING:
+		return L"\uEBB1";
+	default:
+		return L"UNKNOWN";
 	}
 }
 
@@ -54,16 +95,16 @@ private:
 	bool i_toggle;
 public:
 
-	void addValue(ValueType type, const std::shared_ptr<Value>& value)
+	inline void addValue(ValueType type, const std::shared_ptr<Value>& value)
 	{
 		values.push_back(std::pair<ValueType, std::shared_ptr<Value>>(type, value));
 	}
 
-	std::vector<std::pair<ValueType, std::shared_ptr<Value>>> getValues() {
+	inline std::vector<std::pair<ValueType, std::shared_ptr<Value>>> getValues() {
 		return values;
 	}
 
-	std::shared_ptr<Value> getValueObjByName(const std::string& name) {
+	inline std::shared_ptr<Value> getValueObjByName(const std::string& name) {
 		for (int i = 0; i < values.size(); i++)
 		{
 			auto crtObj = values[i].second;
@@ -119,3 +160,35 @@ public:
 
 	AbstractModule& operator=(const AbstractModule&) = delete;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

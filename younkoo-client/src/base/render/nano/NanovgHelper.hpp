@@ -143,7 +143,7 @@ private:
 
 
 namespace NanoVGHelper {
-
+	void LoadFonts();
 	bool InitContext(HWND window2Attach);
 	bool DeleteContext();
 	inline NVGcontext* Context{};
@@ -172,6 +172,13 @@ namespace NanoVGHelper {
 		return nvgColor;
 	}
 
+	inline int nvgColorToRGB(NVGcolor color) {
+		return ((static_cast<int>(color.a * 255) & 0xFF) << 24) |
+			((static_cast<int>(color.r * 255) & 0xFF) << 16) |
+			((static_cast<int>(color.g * 255) & 0xFF) << 8) |
+			((static_cast<int>(color.b * 255) & 0xFF) << 0);
+	}
+
 	inline NVGcolor colorToRGB255(int color) {
 		NVGcolor nvgColor{};
 		nvgColor.r = ((color >> 16) & 0xFF);
@@ -196,14 +203,19 @@ namespace NanoVGHelper {
 
 	void drawOutlineRect(NVGcontext* vg, float x, float y, float width, float height, int outlineWidth, int color);
 	void drawRoundedOutlineRect(NVGcontext* vg, float x, float y, float width, float height, float radius, int outlineWidth, int color);
+	void drawRoundedOutlineRect1(NVGcontext* vg, float x, float y, float width, float height, float radius, int outlineWidth, int color);
 	void drawRect(NVGcontext* vg, float x, float y, float width, float height, int color);
 	void drawHollowRoundRect(NVGcontext* vg, float x, float y, float width, float height, int color, float radius, float thickness);
 	void drawRoundedRectVaried(NVGcontext* vg, float x, float y, float width, float height, int color, float radiusTL, float radiusTR, float radiusBR, float radiusBL);
 	void drawGradientRoundedRect(NVGcontext* vg, float x, float y, float width, float height, int color, int color2, float radius, GradientDirection direction);
 	void nvgTextW(NVGcontext* vg, const std::wstring& str, float x, float y, int font, int size, NVGcolor col, int alight = NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+	void nvgTextU8(NVGcontext* vg, const std::u8string& str, float x, float y, int font, int size, NVGcolor col, int alight = NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+	void nvgTextStr(NVGcontext* vg, const std::string& str, float x, float y, int font, int size, NVGcolor col, int alight = NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
 	void nvgRect(NVGcontext* vg, float x, float y, float width, float height, NVGcolor col);
 	std::pair<float, float> nvgTextBoundsW(NVGcontext* vg, const std::wstring& str, int font, int size);
+	std::pair<float, float> nvgTextBoundsStr(NVGcontext* vg, const std::string& str, int font, int size);
 	void nvgTextBoundsW(NVGcontext* vg, int x, int y, const  std::wstring& str, float bounds[]);
+	void nvgTextBoundsStr(NVGcontext* vg, int x, int y, const  std::string& str, float bounds[]);
 	void drawRoundedRect(NVGcontext* vg, float x, float y, float width, float height, int color, float radius);
 	void drawLine(NVGcontext* vg, float x, float y, float endX, float endY, float width, int color);
 	inline void scale(NVGcontext* vg, float x, float y) {
@@ -274,10 +286,11 @@ namespace NanoVGHelper {
 	inline void stopRotate() {
 		pop();
 	}
+	inline int watermark = 0;
 	inline int fontHarmony{};
-	inline int fontClickguiIcon{};
-	inline int fontRobotoBold{};
-	inline int fontRoboto{};
+	inline int fontHarmonyBold{};
+	inline int fontGreycliffCFLight{};
+	inline int fontMaterialIcon{};
 	inline ScissorHelperImpl scissorHelper;
 }
 

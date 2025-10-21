@@ -17,13 +17,13 @@ auto vm_helper::find_vm_calls(PVOID start) -> std::vector<PVOID> {
 
 	restore_register_addr = scan(restore_register_pattern, start_addr, end_addr);
 #ifdef DEBUGGER
-	std::cout << "Restore_register_addr :" << (void*)restore_register_addr << std::endl;
+	LOG("Restore_register_addr :" << (void*)restore_register_addr);
 #endif // DEBUGGER
 
 	uintptr_t vm_call_addr = scan(call_pattern, start_addr, end_addr);
 	if (!vm_call_addr) {
 #ifdef DEBUGGER
-		std::cout << "Failed to find vm_call_addr using pattern 1" << std::endl;
+		LOG("Failed to find vm_call_addr using pattern 1");
 #endif
 		call_pattern = const_cast<char*>(vm_call_pattern2.c_str());
 		vm_call_addr = scan(call_pattern, start_addr, end_addr);
@@ -45,13 +45,13 @@ auto vm_helper::find_vm_calls(PVOID start) -> std::vector<PVOID> {
 
 	if (!vm_call_addr) {
 #ifdef DEBUGGER
-		std::cout << "Failed to find vm_call_addr using pattern 2" << std::endl;
+		LOG("Failed to find vm_call_addr using pattern 2");
 #endif
 	}
 
 	// TODO: Wait fix finded address
 #ifdef DEBUGGER
-	std::cout << "vm_call_addr: " << reinterpret_cast<void*>(vm_call_addr) << std::endl;
+	LOG("vm_call_addr: " << reinterpret_cast<void*>(vm_call_addr));
 #endif
 	while (vm_call_addr) {
 		const uintptr_t vm_call_address = scan(vm_call_address_pattern.c_str(), vm_call_addr, vm_call_addr + 0x64);
@@ -74,7 +74,7 @@ auto vm_helper::find_vm_calls(PVOID start) -> std::vector<PVOID> {
 		default:
 
 #ifdef DEBUGGER
-			std::cout << "Unknown type: " << std::hex << static_cast<int>(type) << std::endl;
+			LOG("Unknown type: " << std::hex << static_cast<int>(type));
 #endif
 			break;
 		}

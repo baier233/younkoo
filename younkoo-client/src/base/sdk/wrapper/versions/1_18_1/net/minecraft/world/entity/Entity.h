@@ -13,6 +13,9 @@ BEGIN_KLASS_DEF(Entity, return SRGParser::get().getObfuscatedClassName("net/mine
 JNI::Field < Vec3, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/world/entity/Entity"), "position")
 )> position{ *this };/* Lnet/minecraft/world/phys/Vec3; */
+JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "isSprinting", "()Z").first
+)> isSprinting{ *this };
 
 JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "setGlowingTag", "(Z)V").first
@@ -21,6 +24,14 @@ JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<Vec3, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getPosition", "(F)Lnet/minecraft/world/phys/Vec3;").first
 ), jfloat> getPosition{ *this };
+
+JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "moveRelative", "(FLnet/minecraft/world/phys/Vec3;)V").first
+), jfloat, Vec3> moveRelative{ *this };
+
+JNI::Method<Vec3, JNI::STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getInputVector", "(Lnet/minecraft/world/phys/Vec3;FF)Lnet/minecraft/world/phys/Vec3;").first
+), Vec3, jfloat, jfloat> getInputVector{ *this };
 
 JNI::Field<jdouble, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/world/entity/Entity"), "xOld")
@@ -66,6 +77,10 @@ JNI::Method<Vec2, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<jfloat, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getEyeHeight", "()F").first
 )> getEyeHeight{ *this };
+
+JNI::Method<jint, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/level/entity/EntityAccess", "getId", "()I").first
+)> getId{ *this };
 
 JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "setRot", "(FF)V").first
@@ -124,6 +139,10 @@ JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "setShiftKeyDown", "(Z)V").first
 ), jboolean> setShiftKeyDown{ *this };
 
+
+JNI::Method<String, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getStringUUID", "()Ljava/lang/String;").first
+)> getStringUUID{ *this };
 
 JNI::Method<AABB, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/level/entity/EntityAccess", "getBoundingBox", "()Lnet/minecraft/world/phys/AABB;").first

@@ -24,7 +24,7 @@ void JVMWrappers::init(VMStructEntry* vmstructs, VMTypeEntry* vmtypes, VMIntCons
 		if (s->isStatic)
 			std::cout <<
 			"address: " << s->address << "\n";
-		std::cout << "offset: " << s->offset << "\n\n";
+		LOG_N("offset: " << s->offset << "\n\n");
 #endif // DEBUGGER
 		struct_entries[s->typeName][s->fieldName] = s;
 	}
@@ -32,7 +32,7 @@ void JVMWrappers::init(VMStructEntry* vmstructs, VMTypeEntry* vmtypes, VMIntCons
 	for (int i = 0; vmtypes[i].typeName != nullptr; ++i) {
 		const auto t = &vmtypes[i];
 #ifdef DEBUGGER
-		std::cout << "VMType :" << t->typeName << "\nSize :" << t->size << "\n\n";
+		LOG_N("VMType :" << t->typeName << "\nSize :" << t->size << "\n\n");
 #endif // DEBUGGER
 
 		type_entries[t->typeName] = t;
@@ -42,7 +42,7 @@ void JVMWrappers::init(VMStructEntry* vmstructs, VMTypeEntry* vmtypes, VMIntCons
 	for (int i = 0; vmints[i].name != nullptr; ++i) {
 		const auto v = &vmints[i];
 #ifdef DEBUGGER
-		std::cout << "VMInt :" << v->name << "\nValue :" << v->value << "\n\n";
+		LOG_N("VMInt :" << v->name << "\nValue :" << v->value << "\n\n");
 #endif // DEBUGGER
 		int_entries[v->name] = v;
 	}
@@ -50,7 +50,7 @@ void JVMWrappers::init(VMStructEntry* vmstructs, VMTypeEntry* vmtypes, VMIntCons
 	for (int i = 0; vmlongs[i].name != nullptr; ++i) {
 		const auto l = &vmlongs[i];
 #ifdef DEBUGGER
-		std::cout << "VMLong :" << l->name << "\nValue :" << l->value << "\n\n";
+		LOG_N("VMLong :" << l->name << "\nValue :" << l->value << "\n\n");
 #endif // DEBUGGER
 		long_entries[l->name] = l;
 	}

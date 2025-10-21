@@ -18,7 +18,7 @@ std::vector<jclass> InventoryUtils::findBlocksEndingWith(const std::vector<std::
 			//	V1_18_1::Block block = next.object_instance;
 			auto rl = block_registry.getKey(next);
 			auto path = rl.getPath().toString();
-			std::cout << "Path : " << path << std::endl;
+			LOG("Path : " << path);
 			for (auto& target : targets)
 			{
 				if (strutil::ends_with(path, target))

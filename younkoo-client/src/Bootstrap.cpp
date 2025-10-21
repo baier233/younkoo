@@ -12,7 +12,7 @@
 
 static DWORD WINAPI BootStrapThread(LPVOID hDll)
 {
-	//Setup Client Here
+	//Setup Client Here`
 	auto result = Younkoo::get().setup();
 	if (!result)
 	{
@@ -22,18 +22,22 @@ static DWORD WINAPI BootStrapThread(LPVOID hDll)
 }
 
 #include "utils/Misc.hpp"
+#include <utils/Thread.h>
 BOOL Main::ProcessAttach(HMODULE hDll)
 {
 	Thread::s_nTlsIndent = TlsAlloc();
 	Thread::s_nTlsThread = TlsAlloc();
-#ifndef PULISH
-	Utils::CreateConsole_();
-#endif // PULISH
 
+
+
+#ifndef PUBLISH
+	Console::CreateConsole_();
+#endif // PULISH
 	current_module = hDll;
 
 	auto handle = CreateThread(0, 0, BootStrapThread, hDll, 0, 0);
 
+	//utils::thread::hideThread(handle);
 	if (handle) CloseHandle(handle);
 	Thread::ThreadAttach(hDll);
 	return TRUE;
@@ -51,7 +55,7 @@ BOOL Main::ProcessDetach(HMODULE hDll)
 		TlsFree(Thread::s_nTlsThread);
 	}
 
-	Utils::CloseConsole_();
+	//Console::CloseConsole_();
 	return TRUE;
 }
 

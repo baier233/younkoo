@@ -10,13 +10,13 @@
 #include <base/event/Events.h>
 #include <base/Younkoo.hpp>
 #include <base/features/api/chunk/ChunkSharedFlag.h>
-
+#include <log/LOG.h>
 void LevelHook::hook(const HookManagerData& container)
 {
 
 	if (SRGParser::get().GetVersion() != Versions::FORGE_1_18_1)
 		return;
-	std::cout << "Processing hook for Level " << std::endl;
+	LOG("Processing hook for Level ");
 
 	auto& methods_being_hooked = container.methods_being_hooked;
 	auto& methods_dont_compile = container.methods_dont_compile;
@@ -27,13 +27,12 @@ void LevelHook::hook(const HookManagerData& container)
 
 	jclass klass = JNI::find_class(V1_18_1::Level::get_name());
 
-	JVM::get().jvmti->RetransformClasses(1, &klass);
 	auto mid = (jmethodID)V1_18_1::Level::static_obj().setBlock;
-	const auto method = *reinterpret_cast<java_hotspot::method**>(mid);
+	auto method = *reinterpret_cast<java_hotspot::method**>(mid);
+
+	method = HookUtils::GenericResolve(mid);
+
 	methods_being_hooked.emplace_back(method);
-
-	HookUtils::GenericResolve(method);
-
 	const auto constants_pool = method->get_const_method()->get_constants();
 
 	auto const_method = method->get_const_method();
@@ -57,16 +56,16 @@ void LevelHook::hook(const HookManagerData& container)
 			current_bytecode.index = bytecodes_index;
 
 			const auto& name = java_runtime::bytecode_names[bytecode];
-			std::cout << "(" << bytecodes_index << ")  " << name << " {";
+			LOG_N("(" << bytecodes_index << ")  " << name << " {");
 			auto length = opcodes.get_length();
 
 			for (int i = 0; i < length - 1; ++i) {
 				int operand = static_cast<int>(bytecodes[bytecodes_index + i]);
 				current_bytecode.operands.push_back(operand);
-				std::cout << (i == 0 ? "" : " , ") << operand;
+				LOG_N((i == 0 ? "" : " , ") << operand);
 			}
 			method_block.push_back(current_bytecode);
-			std::cout << "}" << std::endl;
+			LOG("}");
 			bytecodes_index += length;
 			});
 	}
@@ -80,7 +79,7 @@ void LevelHook::hook(const HookManagerData& container)
 	holder_klass->set_breakpoints(info);
 
 	(void)JNI::get_env()->PopLocalFrame(nullptr);
-	std::cout << std::format("setting return hook for :{}", bc_info.index) << std::endl;
+	LOG(std::format("setting return hook for :{}", bc_info.index));
 	jvm_break_points::set_breakpoint_with_original_code(method, hook_index, static_cast<std::uint8_t>(bytecode), [mid](break_point_info* bp) -> void
 		{
 			static std::once_flag flag{};
@@ -88,11 +87,11 @@ void LevelHook::hook(const HookManagerData& container)
 				{
 					const auto c_m = bp->method->get_const_method();
 					const auto entries = c_m->get_local_variable_entries();
-					std::cout << "Handling setBlock Hook" << std::endl;
+					LOG("Handling setBlock Hook");
 					for (auto& entry : entries)
 					{
-						std::cout << std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
-							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot) << std::endl;
+						LOG(std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
+							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot));
 					}
 				}
 				});
@@ -112,7 +111,7 @@ void LevelHook::hook(const HookManagerData& container)
 				if (klass)
 				{
 					auto instance = java_hotspot::instance_klass::get_instance_class(klass);
-					std::cout << "Klass :" << instance->get_name()->to_string() << std::endl;
+					LOG("Klass :" << instance->get_name()->to_string());
 				}
 			}
 
@@ -122,13 +121,13 @@ void LevelHook::hook(const HookManagerData& container)
 				if (klass)
 				{
 					auto instance = java_hotspot::instance_klass::get_instance_class(klass);
-					std::cout << "Klass :" << instance->get_name()->to_string() << std::endl;
+					LOG("Klass :" << instance->get_name()->to_string());
 				}
 			}
 
 			Wrapper::BlockPos blockPos(newPos);
 			Wrapper::BlockState blockState(state);
-			std::cout << "BlockPos :" << blockPos.getX() << " " << blockPos.getY() << " " << blockPos.getZ() << std::endl;
+			LOG("BlockPos :" << blockPos.getX() << " " << blockPos.getY() << " " << blockPos.getZ());
 			Younkoo::get().EventBus->fire_event(EventChangeBlock{ blockPos,blockState });
 
 			//state.clear_ref();
@@ -136,7 +135,7 @@ void LevelHook::hook(const HookManagerData& container)
 			newPos.clear_ref();
 
 			bp->java_thread->set_thread_state(o_state);
-			//std::cout << "OnRendering BED" << std::endl;
+			//LOG("OnRendering BED");
 
 		});
 

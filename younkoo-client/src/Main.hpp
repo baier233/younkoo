@@ -1,13 +1,18 @@
 ﻿#pragma once
 #include <Windows.h>
-//#define PULISH
 
+#ifdef CURRENT_IN_PUBLISH_CONFIGURTION
+#define PUBLISH
+#endif
+#include <fstream>
 #include <cstdio>
-
-namespace Utils {
+namespace Console {
 	//创建调试窗口
 	inline void CreateConsole_(void)
 	{
+
+#ifndef PUBLISH
+
 		FreeConsole();
 		if (!AllocConsole())
 		{
@@ -23,10 +28,15 @@ namespace Utils {
 
 		*(__acrt_iob_func(1)) = *fp;
 		setvbuf(stdout, NULL, _IONBF, 0);
+#else
+
+
+#endif // !PUBLIC
 	}
 
 	inline void CloseConsole_(void)
 	{
+#ifndef PUBLISH
 		FILE* fp = (__acrt_iob_func(1));
 		if (fp != nullptr) {
 			fclose(fp);
@@ -39,10 +49,13 @@ namespace Utils {
 			MessageBoxA(HWND_DESKTOP, buffer, "Error", MB_OK);
 			return;
 		}
-	}
+#endif // !PUBLISH
 
 
-};
+		}
+
+
+	};
 
 namespace Main {
 	inline HMODULE current_module{};

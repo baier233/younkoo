@@ -3,6 +3,7 @@
 #include "wrapper/Object.h"
 #include "wrapper/net/minecraft/entity/player/EntityPlayer.h"
 #include <wrapper/net/minecraft/block/state/BlockState.h>
+#include <wrapper/net/minecraft/block/state/IBlockState.h>
 #include <wrapper/net/minecraft/util/BlockPos.h>
 #include <wrapper/net/minecraft/world/chunk/Chunk.h>
 
@@ -14,6 +15,8 @@ public:
 	std::vector<Entity> getEntityList();
 	BlockState getBlockState(const Math::Vector3D& pos);
 	BlockState getBlockState(const BlockPos& pos);
+	IBlockState getIBlockState(const BlockPos& pos);
+	bool isAirBlock(const Math::Vector3D& pos);
 	Chunk getChunk(int x, int z);
 };
 

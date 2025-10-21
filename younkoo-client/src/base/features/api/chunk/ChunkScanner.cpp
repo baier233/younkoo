@@ -2,6 +2,7 @@
 
 #include <wrapper/net/minecraft/client/Minecraft.h>
 #include <JVM.hpp>
+#include <log/LOG.h>
 
 
 
@@ -84,7 +85,7 @@ static void scanChunk(const ChunkUpdateRequest* req) {
 
 	auto end = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double, std::atto> duration = end - start;
-	std::cout << "Scanning chunk took " << duration.count() << "s\n";
+	LOG_N("Scanning chunk took " << duration.count() << "s\n");
 }
 
 
@@ -130,7 +131,7 @@ void ChunkScanner::subscribe(std::shared_ptr<BlockChangeSubscriber> newSubscribe
 {
 	std::lock_guard<std::mutex> lock(mutex);
 	subscribers.push_back(newSubscriber);
-	std::cout << "Scanning " << loadedChunks.size() << " chunks for subscriber\n";
+	LOG_N("Scanning " << loadedChunks.size() << " chunks for subscriber\n");
 	for (const auto& loadedChunk : loadedChunks) {
 		ChunkScannerThread::enqueueChunkUpdate(std::make_unique<ChunkUpdateRequest>(loadedChunk.x, loadedChunk.z, newSubscriber));
 	}

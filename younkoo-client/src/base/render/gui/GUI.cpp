@@ -22,13 +22,19 @@ using namespace nanogui;
 
 static std::vector<std::pair<std::pair<int, int>, std::function<void(int oWidth, int oHeight)>>> layoutLambdas;
 static std::map<AbstractModule*, Button*> toggleButtons;
-static std::map<AbstractModule*, CheckBox*> boolWidgets;
-static std::map<AbstractModule*, std::pair<Slider*, TextBox*>> intWidgets;
-static std::map<AbstractModule*, std::pair<Slider*, TextBox*>> floatWidgets;
-static std::map<AbstractModule*, ComboBox*> listWidgets;
-static std::map<AbstractModule*, ColorPicker*> colorWidgets;
+static std::map<AbstractModule*, Button*> keyButtons;
+static std::map<AbstractModule*, std::map<Value*,CheckBox*>> boolWidgets;
+static std::map<AbstractModule*, std::map<Value*, std::pair<Slider*, TextBox*>>> intWidgets;
+static std::map<AbstractModule*, std::map<Value*, std::pair<Slider*, TextBox*>>> floatWidgets;
+static std::map<AbstractModule*, std::map<Value*, ComboBox*>> listWidgets;
+static std::map<AbstractModule*, std::map<Value*, ColorPicker*>> colorWidgets;
 
 
+#include "api/VirtualKey.h"
+#include <optional>
+
+std::optional < std::pair<AbstractModule*, Button*>> currentBindingButton = std::nullopt;
+static bool binding = false;
 void NanoGui::updateModule(AbstractModule* mod)
 {
 	auto it = toggleButtons.find(mod);
@@ -41,22 +47,32 @@ void NanoGui::updateModule(AbstractModule* mod)
 void NanoGui::updateValues() {
 	for (auto& m : ModuleManager::get().getMods()) {
 		auto mod = ToBaseModule(m);
+		auto it2 = toggleButtons.find(mod);
+		if (it2 != toggleButtons.end())
+		{
+			auto button = it2->second;
+			button->setCaption(mod->getToggle() ? "Disable" : "Toggle");
+		}
+
+		auto it = keyButtons.find(mod);
+		if (it != keyButtons.end())
+		{
+			auto button = it->second;
+			auto display = "Click to Bind :" + VirtualKey::toString(it->first->getKey());
+			button->setCaption(display);
+		}
 		for (auto& valuePair : mod->getValues()) {
 			ValueType valueType = valuePair.first;
 			auto& value = valuePair.second;
-			auto it = toggleButtons.find(mod);
-			if (it != toggleButtons.end())
-			{
-				auto button = it->second;
-				button->setCaption(mod->getToggle() ? "Disable" : "Toggle");
-			}
+
 			switch (valueType) {
 			case BoolType:
 				if (auto boolValue = dynamic_cast<BoolValue*>(value.get())) {
 					auto it = boolWidgets.find(mod);
 					if (it != boolWidgets.end()) {
-						auto checkBox = it->second;
-						checkBox->setChecked(boolValue->getValue());
+
+						auto& checkBox = it->second;
+						checkBox[boolValue]->setChecked(boolValue->getValue());
 					}
 				}
 				break;
@@ -64,7 +80,8 @@ void NanoGui::updateValues() {
 				if (auto intValue = dynamic_cast<NumberValue*>(value.get())) {
 					auto it = intWidgets.find(mod);
 					if (it != intWidgets.end()) {
-						auto [slider, textBox] = it->second;
+						auto &map = it->second;
+						auto& [slider, textBox] = map[intValue];
 						int value = intValue->getValue();
 						slider->setValue(value);
 						textBox->setValue(std::to_string(value));
@@ -75,7 +92,8 @@ void NanoGui::updateValues() {
 				if (auto floatValue = dynamic_cast<FloatValue*>(value.get())) {
 					auto it = floatWidgets.find(mod);
 					if (it != floatWidgets.end()) {
-						auto [slider, textBox] = it->second;
+						auto& map = it->second;
+						auto& [slider, textBox] = map[floatValue];
 						float value = floatValue->getValue();
 						slider->setValue(value);
 						std::ostringstream oss;
@@ -88,8 +106,8 @@ void NanoGui::updateValues() {
 				if (auto modeValue = dynamic_cast<ModeValue*>(value.get())) {
 					auto it = listWidgets.find(mod);
 					if (it != listWidgets.end()) {
-						auto comboBox = it->second;
-						comboBox->setSelectedIndex(modeValue->getValue());
+						auto& comboBox = it->second;
+						comboBox[modeValue]->setSelectedIndex(modeValue->getValue());
 					}
 				}
 				break;
@@ -97,10 +115,10 @@ void NanoGui::updateValues() {
 				if (auto colorValue = dynamic_cast<ColorValue*>(value.get())) {
 					auto it = colorWidgets.find(mod);
 					if (it != colorWidgets.end()) {
-						auto colorPicker = it->second;
+						auto& colorPicker = it->second;
 						auto colorArray = (float*)value->getPtr();
 						Color color(colorArray[0], colorArray[1], colorArray[2], colorArray[3]);
-						colorPicker->setColor(color);
+						colorPicker[colorValue]->setColor(color);
 					}
 				}
 				break;
@@ -110,8 +128,6 @@ void NanoGui::updateValues() {
 		}
 	}
 }
-#include <optional>
-
 namespace NanoGui {
 	nanogui::ref<nanogui::Screen> screen = nullptr;
 	///screen 不需要主动调用decref,在delete form的时候screen会跟着释放。
@@ -127,9 +143,6 @@ public:
 		Younkoo::get().EventBus->fire_event(e);
 	}
 };
-#include "api/VirtualKey.h"
-std::optional < std::pair<AbstractModule*, Button*>> currentBindingButton = std::nullopt;
-static bool binding = false;
 
 static auto updateCurrentButton() {
 	auto display = (binding ? "Scanning..." : "Click to Bind :" + VirtualKey::toString(currentBindingButton->first->getKey()));
@@ -173,8 +186,8 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 				updateCurrentButton();
 				});
 
-
 			toggleButtons[mod] = button;
+			keyButtons[mod] = keyButton;
 
 			for (auto& valuePair : mod->getValues()) {
 				ValueType valueType = valuePair.first;
@@ -187,7 +200,8 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 							*(bool*)value->getPtr() = enabled;
 							});
 						checkBox->setChecked(boolValue->getValue());
-						boolWidgets[mod] = checkBox;
+						auto &map = boolWidgets[mod];
+						map[value.get()] = checkBox;
 					}
 					break;
 				case IntType:
@@ -222,7 +236,7 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 							}
 							return true;
 							});
-						intWidgets[mod] = std::make_pair(slider, textBox);
+						intWidgets[mod][value.get()] = std::make_pair(slider, textBox);
 					}
 					break;
 				case FloatType:
@@ -236,6 +250,9 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 						slider->setValue(floatValue->getValue());
 
 						auto textBox = new TextBox(sliderPanel);
+
+						floatWidgets[mod][floatValue] = std::make_pair(slider, textBox);
+
 						textBox->setFixedSize(Vector2i(50, 20));
 						textBox->setFontSize(15);
 						std::ostringstream oss;
@@ -260,7 +277,6 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 							}
 							return true;
 							});
-						floatWidgets[mod] = std::make_pair(slider, textBox);
 					}
 					break;
 				case ListType:
@@ -275,7 +291,7 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 						comboBox->setCallback([value](int selectedIndex) {
 							*(int*)value->getPtr() = selectedIndex;
 							});
-						listWidgets[mod] = comboBox;
+						listWidgets[mod][modeValue] = comboBox;
 					}
 					break;
 				case ColorType:
@@ -289,7 +305,7 @@ static void createWindow(int xPos, const std::string& title, Category category) 
 							colorArray[2] = color.b();
 							colorArray[3] = color.w();
 							});
-						colorWidgets[mod] = colorPicker;
+						colorWidgets[mod][colorValue] = colorPicker;
 					}
 					break;
 				default:
@@ -342,6 +358,7 @@ static void createSettingsWindow(int xPos) {
 		//TODO:Choose the config you need
 		ConfigManager::get().LoadConfig("config.json");
 		NanoGui::updateValues();
+
 		});
 	win->performLayout(NanoGui::screen->nvgContext());
 
@@ -350,8 +367,8 @@ static void createSettingsWindow(int xPos) {
 	std::function<void(int, int)> doLayout = [win, scrollPanel](int width, int height) {
 
 		auto [winWidth, winHeight] = Renderer::get().renderContext.winSize;
-		//std::cout << "height : " << width << " " << winHeight << std::endl;
-		//std::cout << "width :" << height << " " << winWidth << std::endl;
+		//LOG("height : " << width << " " << winHeight);
+		//LOG("width :" << height << " " << winWidth);
 		if (width < 250)
 		{
 			width = 250;
@@ -389,7 +406,7 @@ void NanoGui::Init(void* hwnd, void* hdc, void* vg)
 	auto& gui = form;
 	int xPos = 10;
 
-	for (Category c : { Category::COMBAT, Category::MOVEMENT, Category::PLAYER, Category::MISC, Category::VISUAL }) {
+	for (Category c : { Category::COMBAT, Category::MOVEMENT, Category::PLAYER, Category::WORLD, Category::VISUAL }) {
 		switch (c) {
 		case Category::COMBAT:
 			createWindow(xPos, "Combat", c);
@@ -400,7 +417,7 @@ void NanoGui::Init(void* hwnd, void* hdc, void* vg)
 		case Category::PLAYER:
 			createWindow(xPos, "Player", c);
 			break;
-		case Category::MISC:
+		case Category::WORLD:
 			createWindow(xPos, "Misc", c);
 			break;
 		case Category::VISUAL:
@@ -418,7 +435,7 @@ void NanoGui::Init(void* hwnd, void* hdc, void* vg)
 
 	YounkooIO::IOEvents.SetCursorPosCallback(
 		[](HWND w, double x, double y) {
-			//std::cout << "X :" << x << " Y :" << y << std::endl;
+			//LOG("X :" << x << " Y :" << y);
 			if (NanoGui::available)
 				return screen->cursorPosCallbackEvent(x, y);
 			return false;
@@ -435,7 +452,7 @@ void NanoGui::Init(void* hwnd, void* hdc, void* vg)
 
 	YounkooIO::IOEvents.SetKeyCallback(
 		[](HWND w, int key, int scancode, int action, int mods) {
-			if (binding && currentBindingButton != std::nullopt && action == CALLBACK_PRESS)
+			if (binding && currentBindingButton != std::nullopt && action == CALLBACK_PRESS && key <= 166)
 			{
 
 				if (key == VK_ESCAPE)

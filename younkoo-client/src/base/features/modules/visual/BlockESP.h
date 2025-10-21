@@ -33,7 +33,7 @@ private:
 inline BlockTracker::BlockTracker(const std::vector<std::string>& targets)
 {
 	targets_ = InventoryUtils::findBlocksEndingWith(targets);
-	std::cout << "targets_ :" << targets_.size() << std::endl;
+	LOG("targets_ :" << targets_.size());
 }
 
 inline std::shared_ptr<TrackedState> BlockTracker::getStateFor(TargetBlockPos pos, Wrapper::BlockState& state)

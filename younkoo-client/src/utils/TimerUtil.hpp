@@ -4,39 +4,25 @@
 class TimerUtil {
 
 private:
-	long lastMS = std::chrono::system_clock::now().time_since_epoch().count();
+    std::chrono::steady_clock::time_point lastMS = std::chrono::steady_clock::now();
 
 public:
-	void reset() {
-		lastMS = std::chrono::system_clock::now().time_since_epoch().count();
-	}
+    void reset() {
+        lastMS = std::chrono::steady_clock::now();
+    }
 
-	bool hasTimeElapsed(long time, bool reset) {
-		if (std::chrono::system_clock::now().time_since_epoch().count() - lastMS > time) {
-			if (reset) this->reset();
-			return true;
-		}
-		return false;
-	}
+    bool hasTimeElapsed(std::chrono::milliseconds time, bool reset) {
+        std::chrono::steady_clock::time_point timerNow = std::chrono::steady_clock::now();
+        if (std::chrono::duration_cast<std::chrono::milliseconds>(timerNow - lastMS) > time) {
+            if (reset) this->reset();
+            return true;
+        }
+        return false;
+    }
 
-	bool hasTimeElapsedE(long time) const {
-		return std::chrono::system_clock::now().time_since_epoch().count() - lastMS >= time;
-	}
-
-	bool hasTimeElapsed(long time) const {
-		return std::chrono::system_clock::now().time_since_epoch().count() - lastMS > time;
-	}
-
-	bool hasTimeElapsed(double time) const {
-		return hasTimeElapsed((long)time);
-	}
-
-	long getTime() const {
-		return std::chrono::system_clock::now().time_since_epoch().count() - lastMS;
-	}
-
-	void setTime(long time) {
-		lastMS = time;
-	}
-
+    template <typename T>
+    bool hasTimeElapsed(T time, bool reset) {
+        std::chrono::milliseconds duration(time);
+        return hasTimeElapsed(duration, reset);
+    }
 };

@@ -9,7 +9,7 @@
 #define ToBaseModule(__MOD) reinterpret_cast<AbstractModule*>(__MOD)
 #define ToDirectModule(__Impl, __Mod) reinterpret_cast<__Impl*>(__Mod)
 typedef void* HMOD;
-namespace dp {
+namespace dxg {
 	class handler_registration;
 }
 
@@ -19,7 +19,7 @@ private:
 
 
 public:
-	std::vector<dp::handler_registration> registrations;
+	std::vector<dxg::handler_registration> registrations;
 	ModuleManager();
 
 	~ModuleManager() = default;

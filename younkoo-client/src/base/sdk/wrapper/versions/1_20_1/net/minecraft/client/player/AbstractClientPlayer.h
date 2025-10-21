@@ -28,10 +28,6 @@ JNI::Field<jfloat, JNI::NOT_STATIC ,DECLARE_NAME(
 return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/client/player/AbstractClientPlayer"), "elytraRotZ")
 )> elytraRotZ{ *this};/* F */
 
-JNI::Field<ClientLevel, JNI::NOT_STATIC ,DECLARE_NAME(
-return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/client/player/AbstractClientPlayer"), "clientLevel")
-)> clientLevel{ *this};/* Lnet/minecraft/client/multiplayer/ClientLevel; */
-
 JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
 return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/AbstractClientPlayer", "isCreative", "()Z").first
 )> isCreative{ *this};
@@ -39,10 +35,6 @@ return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/Abs
 JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
 return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/AbstractClientPlayer", "isCapeLoaded", "()Z").first
 )> isCapeLoaded{ *this};
-
-JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
-return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/AbstractClientPlayer", "tick", "()V").first
-)> tick{ *this};
 
 JNI::Method<Vec3, JNI::NOT_STATIC, DECLARE_NAME(
 return SRGParser::get().getObfuscatedMethodName("net/minecraft/client/player/AbstractClientPlayer", "getDeltaMovementLerped", "(F)Lnet/minecraft/world/phys/Vec3;").first
