@@ -14,6 +14,7 @@ public:
 	void onEnable();
 	void onDisable();
 	void onUpdate();
+	DEFINE_BOOL_VALUE(onlyBlockValue, "Only Block", "Appy Fastplace only when with block.", true);
 protected:
 	FastPlace();
 private:

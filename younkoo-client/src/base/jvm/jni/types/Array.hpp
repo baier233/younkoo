@@ -12,11 +12,18 @@ namespace JNI {
 			ObjectWrapper(object_instance, is_global_ref)
 		{
 		}
-
-		std::vector<array_element_type> to_vector()
+		inline array_element_type get(int i) {
+			if constexpr (!is_jni_primitive_type<array_element_type>)
+			{
+				return array_element_type(get_env()->GetObjectArrayElement((jobjectArray)object_instance, i));
+			}
+			return nullptr;
+		}
+		inline std::vector<array_element_type> to_vector()
 		{
-			jsize length = get_length();
 			std::vector<array_element_type> vector{};
+			if (this->isNULL()) return vector;
+			jsize length = get_length();
 			vector.reserve(length);
 			if constexpr (!is_jni_primitive_type<array_element_type>)
 			{

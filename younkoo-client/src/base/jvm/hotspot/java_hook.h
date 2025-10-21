@@ -14,7 +14,7 @@
 
 namespace JavaHook {
 	namespace JVM {
-		bool Init(JNIEnv* env);
+		bool Init(JNIEnv* env,bool breakpoint = true);
 		bool clean();
 	}
 

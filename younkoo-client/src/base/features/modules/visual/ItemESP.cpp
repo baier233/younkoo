@@ -12,7 +12,7 @@
 
 
 
-ItemESP::ItemESP() : AbstractModule(xorstr_("ItemESP"), Category::VISUAL) {
+ItemESP::ItemESP() : AbstractModule(xorstr_("ItemESP"), Category::VISUAL, xorstr_("ItemESP.")) {
 	REGISTER_EVENT(EventRender3D, ItemESP::onRender3D);
 	REGISTER_EVENT(EventRender2D, ItemESP::onRender);
 	this->addValue(BoolType, displayNameValue);

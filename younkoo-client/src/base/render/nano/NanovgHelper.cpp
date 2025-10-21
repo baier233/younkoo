@@ -5,18 +5,16 @@
 #include "wrapper\gl2.h"
 //#include "nanovg_gl_utils.h"
 #include <iostream>
+#include <utils/Wstr.h>
+
 
 void error_callback(int error, const char* description)
 {
 	std::cerr << "CALLBACK Error: " << description << std::endl;
 }
-#include "../resources/fonts/harmony_sc_light.h"
-#include "../resources/fonts/harmony_sc_regular.h"
-
-#include "../resources/fonts/clickgui-icon.h"
-#include "../resources/fonts/roboto.h"
 
 #include "../Renderer.hpp"
+#include <log/LOG.h>
 
 bool NanoVGHelper::InitContext(HWND window2Attach)
 {
@@ -29,18 +27,14 @@ bool NanoVGHelper::InitContext(HWND window2Attach)
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 	}
 	if (Renderer::get().renderContext.ClassName == "LWJGL") {
-		std::cout << "OpenGL Major Vesrion : 2" << std::endl;
+		LOG("OpenGL Major Vesrion : 2");
 		Context = gl2::init();
 	}
 	else {
-		std::cout << "OpenGL Major Vesrion : 3" << std::endl;
+		LOG("OpenGL Major Vesrion : 3");
 		Context = gl3::init();
 	}
-
-	fontRobotoBold = nvgCreateFont(Context, "roboto_bold", R"(C:\Windows\Fonts\Roboto-Bold.ttf)");
-	fontRoboto = nvgCreateFontMem(Context, "roboto", roboto, roboto_size, 0);
-	fontHarmony = nvgCreateFontMem(Context, "harmony_sans_regular", harmony_sc_regular, harmony_sc_regular_size, 0);
-	fontClickguiIcon = nvgCreateFontMem(Context, "clickgui-icon", clickgui_icon, clickgui_icon_size, 0);
+	NanoVGHelper::LoadFonts();
 
 	nvgShapeAntiAlias(Context, 1);
 	return Context != nullptr;
@@ -93,6 +87,20 @@ void NanoVGHelper::drawRoundedOutlineRect(NVGcontext* vg, float x, float y, floa
 	nvgStrokeColor(vg, nvgColor);
 	nvgStroke(vg);
 }
+void NanoVGHelper::drawRoundedOutlineRect1(NVGcontext* vg, float x, float y, float width, float height, float radius, int outlineWidth, int color)
+{
+	drawLine(vg, x, y, x + width / 2 - 0.1 * width, y, outlineWidth, color);
+	drawLine(vg, x + width / 2 + 0.1 * width, y, x + width, y, outlineWidth, color);
+
+	drawLine(vg, x + width, y, x + width, y + height / 2 - 0.1 * height, outlineWidth, color);
+	drawLine(vg, x + width, y + height / 2 + 0.1 * height, x + width, y + height, outlineWidth, color);
+
+	drawLine(vg, x + width, y + height, x + width / 2 + 0.1 * width, y + height, outlineWidth, color);
+	drawLine(vg, x + width / 2 - 0.1 * width, y + height, x, y + height, outlineWidth, color);
+
+	drawLine(vg, x, y + height, x, y + height / 2 + 0.1 * height, outlineWidth, color);
+	drawLine(vg, x, y + height / 2 - 0.1 * height, x, y, outlineWidth, color);
+}
 void NanoVGHelper::drawRect(NVGcontext* vg, float x, float y, float width, float height, int color)
 {
 	nvgBeginPath(vg);
@@ -110,8 +118,10 @@ void NanoVGHelper::drawHollowRoundRect(NVGcontext* vg, float x, float y, float w
 	nvgStrokeColor(vg, nvgColor);
 	nvgStroke(vg);
 }
-void NanoVGHelper::drawRoundedRectVaried(NVGcontext* vg, float x, float y, float width, float height, int color, float radiusTL, float radiusTR, float radiusBR, float radiusBL)
+void NanoVGHelper::drawRoundedRectVaried(NVGcontext* vg, float x, float y, float width, float height, int color, float radiusTL, float radiusBL, float radiusTR, float radiusBR)
 {
+	drawRect(vg, x, y, width, height, color);
+	return;
 	nvgBeginPath(vg);
 	nvgRoundedRectVarying(vg, x, y, width, height, radiusTL, radiusTR, radiusBR, radiusBL);
 	NVGcolor nvgColor = nvgFillColorEx(vg, color);
@@ -133,31 +143,44 @@ void NanoVGHelper::nvgTextW(NVGcontext* vg, const std::wstring& str, float x, fl
 	nvgFontSize(vg, size);
 	nvgFontFaceId(vg, font);
 
-	auto bounds = nvgTextBoundsW(vg, str, font, size);
-	auto textWidth = bounds.first;
-	auto textHeight = bounds.second;/*
-	if (align & NVG_ALIGN_CENTER) {
-		x -= textWidth / 2;
-	}
-	else if (align & NVG_ALIGN_RIGHT) {
-		x -= textWidth;
+	if (align)
+	{
+		nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
 	}
 
-	if (align & NVG_ALIGN_MIDDLE) {
-		y -= textHeight / 2;
-	}
-	else if (align & NVG_ALIGN_BOTTOM) {
-		y -= textHeight;
-	}*/
+	auto utf8Str = wstr::toString(str);
+	nvgFillColor(vg, col);
+	nvgText(vg, x, y, utf8Str.c_str(), utf8Str.c_str() + utf8Str.size());
+}
+
+void NanoVGHelper::nvgTextU8(NVGcontext* vg, const std::u8string& str, float x, float y, int font, int size, NVGcolor col, int align)
+{
+	nvgBeginPath(vg);
+	nvgFontSize(vg, size);
+	nvgFontFaceId(vg, font);
 
 	if (align)
 	{
 		nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
 	}
 
-	auto utf8Str = Wide2Utf8(str);
 	nvgFillColor(vg, col);
-	nvgText(vg, x, y, utf8Str.c_str(), utf8Str.c_str() + utf8Str.size());
+	nvgText(vg, x, y, (const char*)str.c_str(), (const char*)str.c_str() + str.size());
+}
+
+void NanoVGHelper::nvgTextStr(NVGcontext* vg, const std::string& str, float x, float y, int font, int size, NVGcolor col, int align)
+{
+	nvgBeginPath(vg);
+	nvgFontSize(vg, size);
+	nvgFontFaceId(vg, font);
+
+	if (align)
+	{
+		nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+	}
+
+	nvgFillColor(vg, col);
+	nvgText(vg, x, y, (const char*)str.c_str(), (const char*)str.c_str() + str.size());
 }
 
 void NanoVGHelper::nvgRect(NVGcontext* vg, float x, float y, float width, float height, NVGcolor col)
@@ -179,14 +202,33 @@ std::pair<float, float> NanoVGHelper::nvgTextBoundsW(NVGcontext* vg, const std::
 	return std::make_pair(w, h);
 }
 
+std::pair<float, float> NanoVGHelper::nvgTextBoundsStr(NVGcontext* vg, const std::string& str, int font, int size)
+{
+	float bounds[4] = { 0 };
+	nvgFontSize(vg, size);
+	nvgFontFaceId(vg, font);
+	nvgTextBoundsStr(vg, 0, 0, str, bounds);
+	float w = bounds[2] - bounds[0];
+	float h = bounds[3] - bounds[1];
+	return std::make_pair(w, h);
+}
+
 void NanoVGHelper::nvgTextBoundsW(NVGcontext* vg, int x, int y, const std::wstring& str, float bounds[])
 {
 	auto utf8Str = Wide2Utf8(str);
 	nvgTextBounds(vg, x, y, utf8Str.c_str(), utf8Str.c_str() + utf8Str.size(), bounds);
 }
 
+void NanoVGHelper::nvgTextBoundsStr(NVGcontext* vg, int x, int y, const std::string& str, float bounds[])
+{
+	nvgTextBounds(vg, x, y, str.c_str(), str.c_str() + str.size(), bounds);
+}
+
 void NanoVGHelper::drawRoundedRect(NVGcontext* vg, float x, float y, float width, float height, int color, float radius)
 {
+	/*drawRect(vg, x, y, width, height, color);
+	return;
+	//先不用圆角。。*/
 	nvgBeginPath(vg);
 	nvgRoundedRect(vg, x, y, width, height, radius);
 	nvgFillColorEx(vg, color);

@@ -11,7 +11,9 @@ public:
 	int winWidth, winHeight;
 };
 
-
+class EventUpdate {
+public:
+};
 
 class EventRender3D
 {
@@ -52,4 +54,33 @@ public:
 class EventAttack {
 public:
 	Wrapper::Entity& entity;
+};
+
+
+enum PacketType {
+	RECEIVE,
+	SEND,
+};
+
+#include <wrapper/net/minecraft/network/Packet.h>
+#include <hotspot/classes/java_thread.h>
+class EventPacket {
+public:
+	Wrapper::Packet& packet;
+	PacketType type;
+	java_hotspot::java_thread* thread;
+	bool cancel = false;
+};
+
+class EventStrafe {
+public:
+	float forward = 0;
+	float strafe = 0;
+	float friction = 0;
+	float yaw = 0;
+};
+
+class EventJump {
+public:
+	float yaw = 0;
 };

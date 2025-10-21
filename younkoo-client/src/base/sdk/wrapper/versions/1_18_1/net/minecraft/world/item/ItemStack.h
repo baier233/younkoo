@@ -19,5 +19,10 @@ JNI::Method<jfloat, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<Rarity, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/item/ItemStack", "getRarity", "()Lnet/minecraft/world/item/Rarity;").first
 )> getRarity{ *this };
+
+JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/item/ItemStack", "isEmpty", "()Z").first
+)> isEmpty{ *this };
+
 END_KLASS_DEF();
 END_1_18_1;

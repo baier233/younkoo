@@ -12,6 +12,7 @@ public:
 	void onDisable();
 	void onUpdate();
 protected:
+	DEFINE_BOOL_VALUE(shiftPressedValue, "Need Shift Pressed", "Only when shift key is pressed will this module work.", false);
 	AutoTool();
 private:
 };

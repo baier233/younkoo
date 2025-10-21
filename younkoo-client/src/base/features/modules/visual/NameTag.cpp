@@ -13,7 +13,8 @@ static std::array<int, 4> viewport{};
 
 static std::vector < std::pair<std::string, Math::Vector2D>> entitiesToRender[2]{ {},{} };
 static int currentBufferIndex = 0;
-NameTag::NameTag() :AbstractModule(xorstr_("NameTag"), Category::VISUAL)
+
+NameTag::NameTag() :AbstractModule(xorstr_("NameTag"), Category::VISUAL, xorstr_("NameTag."))
 {
 	REGISTER_EVENT(EventRender3D, NameTag::onRender3D);
 	REGISTER_EVENT(EventRender2D, NameTag::onRender);
@@ -38,13 +39,6 @@ void NameTag::onDisable()
 void NameTag::onUpdate()
 {
 	ToggleCheck;
-
-
-
-
-
-
-
 }
 
 #include <utils/Wstr.h>
@@ -67,7 +61,28 @@ static std::map<wchar_t, NVGcolor> colorMap = {
 	{'e', nvgRGBA(255, 255, 0, 255)},     // "yellow"
 	{'f', nvgRGBA(255, 255, 255, 255)}    // "white"
 };
+std::string getFirstWord(const std::string& str) {
+	size_t pos = str.find(' ');
+	return (pos == std::string::npos) ? str : str.substr(0, pos);
+}
+bool NameTag::FindTarget(const std::string& filePath, const std::string& searchText)
+{
+	std::ifstream file(filePath);
+	if (!file.is_open()) {
+		LOG("cannot open file: " << filePath);
+		return false;
+	}
 
+	std::string line;
+	size_t pos = searchText.find(" ");
+	while (std::getline(file, line)) {
+		if (line.find(getFirstWord(searchText)) != std::string::npos) {
+			return true; // 找到指定文本
+		}
+	}
+
+	return false; // 未找到指定文本
+}
 static std::pair<std::wstring, NVGcolor> parseName(const std::wstring& name) {
 	if (strutil::starts_with(name, L"红队 |")) {
 		return std::make_pair(name.substr(5), nvgRGBA(255, 69, 69, 255));
@@ -88,6 +103,7 @@ static std::pair<std::wstring, NVGcolor> parseName(const std::wstring& name) {
 	}
 	return std::make_pair(name, nvgRGBA(255, 255, 255, 255));
 }
+#include <../config/ConfigManager.h>
 void NameTag::onRender(const EventRender2D& e)
 {
 	ToggleCheck;
@@ -101,6 +117,7 @@ void NameTag::onRender(const EventRender2D& e)
 	int fontSize = fontSizeValue->getValue();
 	for (const auto& entity : entitiesToRender[currentBufferIndex])
 	{
+		// 获取实体名称并转换为字符串
 		auto entityName = wstr::toString(entity.first);
 		//std::wcout << entityName << std::endl;
 		auto [name, color] = parseName(entityName);
@@ -111,7 +128,16 @@ void NameTag::onRender(const EventRender2D& e)
 		float textWidth = bounds.first;
 		float textHeight = bounds.second;
 
-		NanoVGHelper::drawRoundedRect(vg, textX - 5, textY - 20, textWidth + 10, textHeight + 10, NanoVGHelper::rgbaToColor(0, 0, 0, 128), 5.0f);
+		if (FindTarget((ConfigManager::get().GetConfigPath() / "targets.txt").string(), wstr::toString(name))) {
+			name = L"[Target] " + name;
+			bounds = NanoVGHelper::nvgTextBoundsW(e.vg, name, NanoVGHelper::fontHarmony, fontSize);
+
+			textX = entity.second.x - bounds.first / 2;
+			textY = entity.second.y - bounds.second / 2;
+			textWidth = bounds.first;
+			textHeight = bounds.second;
+		}
+		NanoVGHelper::drawRect(vg, textX - 5, textY - 20, textWidth + 10, textHeight + 10, NanoVGHelper::rgbaToColor(0, 0, 0, 128));
 		NanoVGHelper::nvgTextW(vg, name, textX, textY - 15, NanoVGHelper::fontHarmony, fontSize, color);
 		//NanoVGHelper::nvgTextW(vg, entityName, entity.second.x - bounds.first / 2, entity.second.y - bounds.second / 2, NanoVGHelper::fontHarmony, 30, nvgRGBA(255, 255, 255, 255));
 	}
@@ -153,9 +179,9 @@ void NameTag::onRender3D(const EventRender3D& e)
 		renderPos.y += player.getHeight() + 0.3f;
 		Math::Vector2D point{};
 
-		//std::cout << "Camera Pos : { " << std::format("{},{},{}", e.CAMERA_POS.x, e.CAMERA_POS.y, e.CAMERA_POS.z) << "}" << std::endl;
-		//std::cout << "modelView :" << arrayToString(Math::structToVector(e.MODELVIEW_MATRIX)) << std::endl;
-		//std::cout << "projection :" << arrayToString(Math::structToVector(e.PROJECTION_MATRIX)) << std::endl;
+		//LOG("Camera Pos : { " << std::format("{},{},{}", e.CAMERA_POS.x, e.CAMERA_POS.y, e.CAMERA_POS.z) << "}");
+		//LOG("modelView :" << arrayToString(Math::structToVector(e.MODELVIEW_MATRIX)));
+		//LOG("projection :" << arrayToString(Math::structToVector(e.PROJECTION_MATRIX)));
 		auto result = Math::W2S::world2Screen(
 			Math::structToArray(e.MODELVIEW_MATRIX),
 			Math::structToArray(e.PROJECTION_MATRIX),
@@ -168,7 +194,8 @@ void NameTag::onRender3D(const EventRender3D& e)
 
 			//points.push_back(point);
 			point = { result[0],result[1] };
-			//std::cout << "Point(cpp) : {" << point.x << "," << point.y << "}" << std::endl;
+
+			//LOG(player.getDisplayName_Style().getColor().getValue());
 			entites.push_back(std::make_pair(player.getDisplayName() + " HP:" + std::to_string(static_cast<int>(player.getHealth())), point));
 
 		}

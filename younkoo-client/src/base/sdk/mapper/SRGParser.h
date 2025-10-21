@@ -4,7 +4,8 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
-
+#include <gzip/decompress.hpp>
+#pragma comment(lib, "zlibstat.lib")
 enum class Versions {
 	MCP_1_8_9,
 	MCP_1_12_2,
@@ -13,11 +14,9 @@ enum class Versions {
 	FORGE_1_12_2,
 	FORGE_1_18_1,
 	FORGE_1_20_1,
-	VANILLA_1_8_9,
-	VANILLA_1_12_2,
 	LUNAR_1_8_9,
 	LUNAR_1_12_2,
-	BADLION_1_8_9
+	FABRIC_1_20_4
 };
 
 #include "../../../utils/Singleton.hpp"
@@ -27,13 +26,8 @@ private:
 	std::unordered_map<std::string, std::string> fieldMappings;
 	std::unordered_map<std::string, std::pair<std::string, std::string>> methodMappings;
 	std::unordered_map<std::string, std::string> classMappings;
-	//bool CLReverse = false;
-	//bool FDReverse = false;
-	//bool MDReverse = false;
 
-
-	//TODO:Cloud loading
-	void Init(const unsigned char* srgBytes, size_t size, bool Reverse);
+	void Init(const unsigned char* srgBytes, size_t size, bool Reverse, bool compressed);
 public:
 
 	void SetVersion(Versions ver);

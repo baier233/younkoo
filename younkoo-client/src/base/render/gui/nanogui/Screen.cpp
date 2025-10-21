@@ -19,7 +19,7 @@
 #include <iostream>
 
 
-
+#define ENABLE_NEW_GUI
 
 
 /* Allow enforcing the GL2 implementation of NanoVG */
@@ -27,6 +27,7 @@
 #include <nanovg_gl.h>
 #include "../input/Context.hpp"
 #include "../input/IOEvents.h"
+#include <base\render\screen\instance\GuiInstance.h>
 
 NAMESPACE_BEGIN(nanogui)
 
@@ -136,8 +137,11 @@ void Screen::drawAll() {
 	nvgBeginFrame(mNVGContext, mSize[0], mSize[1], mPixelRatio);
 
 	drawContents();
+#ifdef ENABLE_NEW_GUI
+	GuiInstance::DrawGui();
+#else
 	drawWidgets();
-
+#endif
 	nvgEndFrame(mNVGContext);
 	//glfwSwapBuffers(mGLFWWindow);
 }

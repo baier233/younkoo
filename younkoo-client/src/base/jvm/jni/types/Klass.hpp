@@ -30,15 +30,15 @@ namespace JNI {
 
 		auto klass_name = klass_type::get_name();
 #ifdef LOG
-		std::cout << "Finding Klass :" << klass_name << std::endl;
+		LOG("Finding Klass :" << klass_name);
 #endif // LOG
 		jclass found = (jclass)get_env()->NewGlobalRef(find_class(klass_name));
 		{
-			std::unique_lock unique_lock{ jclass_cache<klass_type>::mutex };
+			std::unique_lock unique_lock(jclass_cache<klass_type>::mutex);
 			cached = found;
 		}
 		{
-			std::lock_guard lock{ _refs_to_delete_mutex };
+			std::unique_lock<std::shared_mutex> lock(_refs_to_delete_mutex);
 			_refs_to_delete.push_back(found);
 		}
 		return found;
@@ -89,7 +89,7 @@ namespace JNI {
 			return "L" + get_name() + ";";
 		}
 		inline void print() {
-			std::cout << get_name() + " :\n{	" << "\n  Name:" << this->get_name() << "\n  Sign:" << this->get_signature() << "\n  owner_klass :" << this->owner_klass << "\n}" << std::endl;
+			LOG(get_name() + " :\n{	" << "\n  Name:" << this->get_name() << "\n  Sign:" << this->get_signature() << "\n  owner_klass :" << this->owner_klass << "\n}");
 		}
 	private:
 	};

@@ -5,7 +5,7 @@
 #include <wrapper/versions/1_20_1/net/minecraft/world/phys/Vec2.h>
 #include <wrapper/versions/1_20_1/net/minecraft/network/chat/Component.h>
 #include <wrapper/versions/1_20_1/net/minecraft/commands/arguments/EntityAnchorArgument$Anchor.h>
-
+#include <wrapper/versions/1_20_1/net/minecraft/world/phys/AABB.h>
 
 BEGIN_1_20_1
 BEGIN_KLASS_DEF(Entity, return SRGParser::get().getObfuscatedClassName("net/minecraft/world/entity/Entity"))
@@ -108,8 +108,8 @@ JNI::Field<jfloat, JNI::NOT_STATIC, DECLARE_NAME(
 )> xRot{ *this };/* F */
 
 JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
-	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "isOnGround", "()Z").first
-)> isOnGround{ *this };
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "onGround", "()Z").first
+)> onGround{ *this };
 
 JNI::Method<Vec3, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getDeltaMovement", "()Lnet/minecraft/world/phys/Vec3;").first
@@ -122,5 +122,17 @@ JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "setShiftKeyDown", "(Z)V").first
 ), jboolean> setShiftKeyDown{ *this };
+
+JNI::Method<jint, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/level/entity/EntityAccess", "getId", "()I").first
+)> getId{ *this };
+
+JNI::Method<String, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/Entity", "getStringUUID", "()Ljava/lang/String;").first
+)> getStringUUID{ *this };
+
+JNI::Method<AABB, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/level/entity/EntityAccess", "getBoundingBox", "()Lnet/minecraft/world/phys/AABB;").first
+)> getBoundingBox{ *this };
 END_KLASS_DEF()
 END_1_20_1

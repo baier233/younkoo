@@ -2304,7 +2304,7 @@ namespace httplib {
 			struct stat st;
 			return stat(path.c_str(), &st) >= 0 && S_ISREG(st.st_mode);
 #endif
-	}
+		}
 
 		inline bool is_dir(const std::string& path) {
 			struct stat st;
@@ -2694,8 +2694,8 @@ namespace httplib {
 				ptr, size,
 #endif
 				flags);
-		});
-}
+				});
+		}
 
 		inline ssize_t send_socket(socket_t sock, const void* ptr, size_t size,
 			int flags) {
@@ -3010,8 +3010,8 @@ namespace httplib {
 					if (!bind_or_connect(sock, hints)) {
 						close_socket(sock);
 						sock = INVALID_SOCKET;
-			}
-		}
+					}
+				}
 				return sock;
 			}
 #endif
@@ -3047,7 +3047,7 @@ namespace httplib {
 				 */
 				if (sock == INVALID_SOCKET) {
 					sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-			}
+				}
 #else
 				auto sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 #endif
@@ -3203,7 +3203,7 @@ namespace httplib {
 							return false;
 						}
 #endif
-		}
+					}
 
 					set_nonblocking(sock2, true);
 
@@ -3318,7 +3318,7 @@ namespace httplib {
 					socklen_t len = sizeof(pid);
 					if (getsockopt(sock, SOL_LOCAL, SO_PEERPID, &pid, &len) == 0) {
 						port = pid;
-		}
+					}
 #endif
 					return;
 				}
@@ -3571,9 +3571,9 @@ namespace httplib {
 
 				if (ret != Z_OK && ret != Z_STREAM_END) return false;
 
-		} while (data_length > 0);
+			} while (data_length > 0);
 
-		return true;
+			return true;
 		}
 #endif
 
@@ -3739,9 +3739,9 @@ namespace httplib {
 					// Blank line indicates end of headers.
 					if (line_reader.size() == 1) { break; }
 					line_terminator_len = 1;
-			}
+				}
 #else
-		}
+				}
 				else {
 					continue; // Skip invalid line.
 				}
@@ -4274,7 +4274,7 @@ namespace httplib {
 						trim_double_quotes_copy((val)));
 				}
 				});
-				}
+		}
 
 #ifdef CPPHTTPLIB_NO_EXCEPTIONS
 		inline bool parse_range_header(const std::string& s, Ranges& ranges) {
@@ -4310,10 +4310,10 @@ namespace httplib {
 					}
 					});
 				return all_valid_ranges;
-					}
+			}
 			return false;
 #ifdef CPPHTTPLIB_NO_EXCEPTIONS
-			}
+		}
 #else
 		}
 		catch (...) { return false; }
@@ -5036,7 +5036,7 @@ namespace httplib {
 
 			auto key = is_proxy ? "Proxy-Authorization" : "Authorization";
 			return std::make_pair(key, field);
-			}
+		}
 #endif
 
 		inline bool parse_www_authenticate(const Response& res,
@@ -5101,7 +5101,7 @@ namespace httplib {
 			ContentProviderWithoutLength content_provider_;
 		};
 
-		} // namespace detail
+	} // namespace detail
 
 	inline std::string hosted_at(const std::string& hostname) {
 		std::vector<std::string> addrs;
@@ -5419,7 +5419,7 @@ namespace httplib {
 			else {
 				return read_socket(sock_, ptr, size, CPPHTTPLIB_RECV_FLAGS);
 			}
-	}
+		}
 
 		inline ssize_t SocketStream::write(const char* ptr, size_t size) {
 			if (!is_writable()) { return -1; }
@@ -5567,9 +5567,9 @@ namespace httplib {
 			return std::regex_match(request.path, request.matches, regex_);
 		}
 
-				} // namespace detail
+	} // namespace detail
 
-				// HTTP server implementation
+	// HTTP server implementation
 	inline Server::Server()
 		: new_task_queue(
 			[] { return new ThreadPool(CPPHTTPLIB_THREAD_POOL_COUNT); }) {
@@ -6250,9 +6250,9 @@ namespace httplib {
 					if (val == 0) { // Timeout
 						task_queue->on_idle();
 						continue;
-				}
+					}
 #ifndef _WIN32
-			}
+				}
 #endif
 				socket_t sock = accept(svr_sock_, nullptr, nullptr);
 
@@ -6307,7 +6307,7 @@ namespace httplib {
 				}
 
 				task_queue->enqueue([this, sock]() { process_and_close_socket(sock); });
-	}
+			}
 
 			task_queue->shutdown();
 		}
@@ -6529,12 +6529,12 @@ namespace httplib {
 						res.set_header("Content-Encoding", content_encoding);
 					}
 				}
-				}
+			}
 
 			auto length = std::to_string(res.body.size());
 			res.set_header("Content-Length", length);
-			}
 		}
+	}
 
 	inline bool Server::dispatch_request_for_content_reader(
 		Request& req, Response& res, ContentReader content_reader,
@@ -6578,7 +6578,7 @@ namespace httplib {
 			detail::read_headers(strm, dummy);
 			res.status = 500;
 			return write_response(strm, close_connection, req, res);
-	}
+		}
 #endif
 #endif
 
@@ -6688,7 +6688,7 @@ namespace httplib {
 			if (res.status == -1) { res.status = 404; }
 			return write_response(strm, close_connection, req, res);
 		}
-		}
+	}
 
 	inline bool Server::is_valid() const { return true; }
 
@@ -6915,12 +6915,12 @@ namespace httplib {
 						if (!scli.connect_with_proxy(socket_, res, success, error)) {
 							return success;
 						}
-		}
+					}
 
 					if (!scli.initialize_ssl(socket_, error)) { return false; }
-	}
+				}
 #endif
-	}
+			}
 
 			// Mark the current socket as being in use so that it cannot be closed by
 			// anyone else while this request is ongoing, even though we will be
@@ -7050,8 +7050,8 @@ namespace httplib {
 
 					ret = send(new_req, new_res, error);
 					if (ret) { res = new_res; }
-		}
-	}
+				}
+			}
 		}
 #endif
 
@@ -7109,13 +7109,13 @@ namespace httplib {
 #else
 				return false;
 #endif
-		}
+			}
 			else {
 				ClientImpl cli(next_host.c_str(), next_port);
 				cli.copy_settings(*this);
 				return detail::redirect(cli, req, res, path, location, error);
 			}
-	}
+		}
 	}
 
 	inline bool ClientImpl::write_content_with_provider(Stream& strm,
@@ -7138,7 +7138,7 @@ namespace httplib {
 
 			return detail::write_content_chunked(strm, req.content_provider_,
 				is_shutting_down, *compressor, error);
-	}
+		}
 		else {
 			return detail::write_content(strm, req.content_provider_, 0,
 				req.content_length_, is_shutting_down, error);
@@ -8935,7 +8935,7 @@ namespace httplib {
 				cli_ = detail::make_unique<ClientImpl>(host, port, client_cert_path,
 					client_key_path);
 			}
-	}
+		}
 		else {
 			cli_ = detail::make_unique<ClientImpl>(scheme_host_port, 80,
 				client_cert_path, client_key_path);
@@ -9391,7 +9391,7 @@ namespace httplib {
 
 	// ----------------------------------------------------------------------------
 
-	} // namespace httplib
+} // namespace httplib
 
 #if defined(_WIN32) && defined(CPPHTTPLIB_USE_POLL)
 #undef poll

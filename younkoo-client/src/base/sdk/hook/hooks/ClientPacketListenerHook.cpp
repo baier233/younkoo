@@ -12,10 +12,11 @@
 #include <base/event/Events.h>
 #include <format>
 #include <base/features/api/chunk/ChunkSharedFlag.h>
-static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
+#include <log/LOG.h>
+static java_hotspot::method* ResolveHandleChunkBlocksUpdate(jmethodID mid) {
 
-	std::cout << "\nHooking HandleChunkBlocksUpdate" << std::endl;
-	HookUtils::GenericResolve(method);
+	LOG("\nHooking HandleChunkBlocksUpdate");
+	auto method = HookUtils::GenericResolve(mid);
 
 	const auto constants_pool = method->get_const_method()->get_constants();
 
@@ -40,18 +41,18 @@ static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
 			current_bytecode.index = bytecodes_index;
 
 			const auto& name = java_runtime::bytecode_names[bytecode];
-			std::cout << "(" << bytecodes_index << ")  " << name << " {";
+			LOG_N("(" << bytecodes_index << ")  " << name << " {");
 			auto length = opcodes.get_length();
 
 			for (int i = 0; i < length - 1; ++i) {
 				int operand = static_cast<int>(bytecodes[bytecodes_index + i]);
 				current_bytecode.operands.push_back(operand);
-				std::cout << (i == 0 ? "" : " , ") << operand;
+				LOG_N((i == 0 ? "" : " , ") << operand);
 			}
 
 			method_block.push_back(current_bytecode);
 
-			std::cout << "}" << std::endl;
+			LOG("}");
 			bytecodes_index += length;
 			});
 	}
@@ -61,7 +62,7 @@ static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
 	auto bytecode = static_cast<java_runtime::bytecodes>(bytecodes[hook_index]);
 	info->set_orig_bytecode(bytecode);
 	info->set_next(holder_klass->get_breakpoints());
-	std::cout << "holder_klass :" << holder_klass->get_name() << std::endl;
+	LOG("holder_klass :" << holder_klass->get_name());
 
 
 	auto& bc_info = method_block.back();
@@ -73,7 +74,7 @@ static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
 	(void)JNI::get_env()->PopLocalFrame(nullptr);
 
 
-	std::cout << std::format("Original code :{}", static_cast<int>(bytecode)) << std::endl;
+	LOG(std::format("Original code :{}", static_cast<int>(bytecode)));
 
 	jvm_break_points::set_breakpoint_with_original_code(method, bc_info.index, static_cast<std::uint8_t>(bc_info.opcode), [](break_point_info* bp) -> void {
 		//Ret Point
@@ -89,8 +90,8 @@ static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
 				const auto entries = c_m->get_local_variable_entries();
 				for (auto& entry : entries)
 				{
-					std::cout << std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
-						entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot) << std::endl;
+					LOG(std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
+						entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot));
 					if (entry.name == "p_105070_") p_105070_slot = entry.slot;
 				}
 			}
@@ -115,19 +116,20 @@ static void ResolveHandleChunkBlocksUpdate(java_hotspot::method* method) {
 		{
 			ChunkSharedFlag::updating = true;
 		});
-
+	return method;
 }
 
-static void ResovleHandleForgeLevelChunk(java_hotspot::method* method) {
+static java_hotspot::method* ResovleHandleForgeLevelChunk(jmethodID mid) {
 
-	std::cout << "\nHooking HandleForgeLevelChunk" << std::endl;
+	LOG("\nHooking HandleForgeLevelChunk");
 
 
-	HookUtils::GenericResolve(method);
+	auto method = HookUtils::GenericResolve(mid);
 
 	const auto constants_pool = method->get_const_method()->get_constants();
 
 	auto const_method = method->get_const_method();
+	*(std::uint8_t*)(const_method->get_bytecode_start()) = static_cast<std::uint8_t>(java_runtime::bytecodes::_fast_aload_0);
 
 	auto bytecodes = const_method->get_bytecode();
 	const size_t bytecodes_length = bytecodes.size();
@@ -147,16 +149,16 @@ static void ResovleHandleForgeLevelChunk(java_hotspot::method* method) {
 			current_bytecode.index = bytecodes_index;
 
 			const auto& name = java_runtime::bytecode_names[bytecode];
-			std::cout << "(" << bytecodes_index << ")  " << name << " {";
+			LOG_N("(" << bytecodes_index << ")  " << name << " {");
 			auto length = opcodes.get_length();
 
 			for (int i = 0; i < length - 1; ++i) {
 				int operand = static_cast<int>(bytecodes[bytecodes_index + i]);
 				current_bytecode.operands.push_back(operand);
-				std::cout << (i == 0 ? "" : " , ") << operand;
+				LOG_N((i == 0 ? "" : " , ") << operand);
 			}
 
-			std::cout << "}" << std::endl;
+			LOG("}");
 			bytecodes_index += length;
 			});
 	}
@@ -167,10 +169,10 @@ static void ResovleHandleForgeLevelChunk(java_hotspot::method* method) {
 	info->set_orig_bytecode(bytecode);
 	info->set_next(holder_klass->get_breakpoints());
 	holder_klass->set_breakpoints(info);
-	std::cout << "holder_klass :" << holder_klass->get_name() << std::endl;
+	LOG("holder_klass :" << holder_klass->get_name());
 
 	(void)JNI::get_env()->PopLocalFrame(nullptr);
-	std::cout << std::format("Original code :{}", static_cast<int>(bytecode)) << std::endl;
+	LOG(std::format("Original code :{}", static_cast<int>(bytecode)));
 	jvm_break_points::set_breakpoint_with_original_code(method, hook_index, static_cast<std::uint8_t>(bytecode), [](break_point_info* bp) -> void
 		{
 			auto o_state = bp->java_thread->get_thread_state();
@@ -183,8 +185,8 @@ static void ResovleHandleForgeLevelChunk(java_hotspot::method* method) {
 					const auto entries = c_m->get_local_variable_entries();
 					for (auto& entry : entries)
 					{
-						std::cout << std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
-							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot) << std::endl;
+						LOG(std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
+							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot));
 					}
 				}
 				});
@@ -197,16 +199,17 @@ static void ResovleHandleForgeLevelChunk(java_hotspot::method* method) {
 
 			bp->java_thread->set_thread_state(o_state);
 		});
-
+	return method;
 }
-static void ResolveHandleLevelChunkWithLight(java_hotspot::method* method) {
+static java_hotspot::method* ResolveHandleLevelChunkWithLight(jmethodID mid) {
 
-	std::cout << "\nHooking HandleLevelChunkWithLight" << std::endl;
-	HookUtils::GenericResolve(method);
+	LOG("\nHooking HandleLevelChunkWithLight");
+	auto method = HookUtils::GenericResolve(mid);
 
 	const auto constants_pool = method->get_const_method()->get_constants();
 
 	auto const_method = method->get_const_method();
+	*(std::uint8_t*)(const_method->get_bytecode_start()) = static_cast<std::uint8_t>(java_runtime::bytecodes::_fast_aload_0);
 
 	auto bytecodes = const_method->get_bytecode();
 	const size_t bytecodes_length = bytecodes.size();
@@ -226,16 +229,16 @@ static void ResolveHandleLevelChunkWithLight(java_hotspot::method* method) {
 			current_bytecode.index = bytecodes_index;
 
 			const auto& name = java_runtime::bytecode_names[bytecode];
-			std::cout << "(" << bytecodes_index << ")  " << name << " {";
+			LOG_N("(" << bytecodes_index << ")  " << name << " {");
 			auto length = opcodes.get_length();
 
 			for (int i = 0; i < length - 1; ++i) {
 				int operand = static_cast<int>(bytecodes[bytecodes_index + i]);
 				current_bytecode.operands.push_back(operand);
-				std::cout << (i == 0 ? "" : " , ") << operand;
+				LOG_N((i == 0 ? "" : " , ") << operand);
 			}
 
-			std::cout << "}" << std::endl;
+			LOG("}");
 			bytecodes_index += length;
 			});
 	}
@@ -246,10 +249,10 @@ static void ResolveHandleLevelChunkWithLight(java_hotspot::method* method) {
 	info->set_orig_bytecode(bytecode);
 	info->set_next(holder_klass->get_breakpoints());
 	holder_klass->set_breakpoints(info);
-	std::cout << "holder_klass :" << holder_klass->get_name() << std::endl;
+	LOG("holder_klass :" << holder_klass->get_name());
 
 	(void)JNI::get_env()->PopLocalFrame(nullptr);
-	std::cout << std::format("Original code :{}", static_cast<int>(bytecode)) << std::endl;
+	LOG(std::format("Original code :{}", static_cast<int>(bytecode)));
 	jvm_break_points::set_breakpoint_with_original_code(method, hook_index, static_cast<std::uint8_t>(bytecode), [](break_point_info* bp) -> void
 		{
 			static std::once_flag flag{};
@@ -261,8 +264,8 @@ static void ResolveHandleLevelChunkWithLight(java_hotspot::method* method) {
 					const auto entries = c_m->get_local_variable_entries();
 					for (auto& entry : entries)
 					{
-						std::cout << std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
-							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot) << std::endl;
+						LOG(std::format("entry : {}\nstart_location: {}\nlength: {}\nsignature: {}\ngeneric_signature: {}\nslot: {}",
+							entry.name, entry.start_location, entry.length, entry.signature, entry.generic_signature, entry.slot));
 					}
 				}
 				});
@@ -277,14 +280,14 @@ static void ResolveHandleLevelChunkWithLight(java_hotspot::method* method) {
 			bp->java_thread->set_thread_state(o_state);
 
 		});
-
+	return method;
 }
 
 void ClientPacketListenerHook::hook(const HookManagerData& container)
 {
 	if (SRGParser::get().GetVersion() != Versions::FORGE_1_18_1)
 		return;
-	std::cout << "Processing hook for BedRenderer " << std::endl;
+	LOG("Processing hook for BedRenderer ");
 
 	auto& methods_being_hooked = container.methods_being_hooked;
 	auto& methods_dont_compile = container.methods_dont_compile;
@@ -301,23 +304,20 @@ void ClientPacketListenerHook::hook(const HookManagerData& container)
 
 	{
 		auto mid = (jmethodID)V1_18_1::ClientPacketListener::static_obj().handleChunkBlocksUpdate;
-		const auto method = *reinterpret_cast<java_hotspot::method**>(mid);
+		auto method = ResolveHandleChunkBlocksUpdate(mid);
 		methods_being_hooked.emplace_back(method);
-		ResolveHandleChunkBlocksUpdate(method);
 	}
 
 	{
 		auto mid = (jmethodID)V1_18_1::ClientPacketListener::static_obj().handleForgetLevelChunk;
-		const auto method = *reinterpret_cast<java_hotspot::method**>(mid);
+		auto method = ResovleHandleForgeLevelChunk(mid);
 		methods_being_hooked.emplace_back(method);
-		ResovleHandleForgeLevelChunk(method);
 	}
 
 	{
 		auto mid = (jmethodID)V1_18_1::ClientPacketListener::static_obj().handleLevelChunkWithLight;
-		const auto method = *reinterpret_cast<java_hotspot::method**>(mid);
+		auto method = ResolveHandleLevelChunkWithLight(mid);
 		methods_being_hooked.emplace_back(method);
-		ResolveHandleLevelChunkWithLight(method);
 	}
 
 }

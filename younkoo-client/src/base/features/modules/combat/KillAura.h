@@ -16,6 +16,7 @@ public:
 	void onDisable();
 	void onRender2D(const EventRender2D& e);
 	void onUpdate();
+
 protected:
 
 	DEFINE_FLOAT_VALUE(rangeValue, "Range", "Range.", 3.5f, 3.0f, 5.0f);
@@ -25,6 +26,9 @@ protected:
 
 	DEFINE_BOOL_VALUE(autoBlockValue, "AutoBlock", "AutoBlock", false);
 	DEFINE_BOOL_VALUE(keepSprintValue, "KeepSprint", "KeepSprint", false);
+	DEFINE_BOOL_VALUE(canAttackCheckValue, "Can Attack Check", "canAttackCheckValue", true);
+	DEFINE_BOOL_VALUE(breakBlockCheckValue, "Break Block Check", "Break Block Check", false);
+
 	DEFINE_FLOAT_VALUE(smoothValue, "Smooth", "Smooth..", 15.f, 1.0f, 90.0f);
 	std::shared_ptr<ModeValue> targetPriorityListMode = std::make_shared<ModeValue>("Target", std::vector<int>{ Distance, Health, Crosshair }, std::vector<std::string>{ "Distance", "Health", "Closest to Crosshair" }, Distance);
 	std::shared_ptr<ModeValue> killauraMode = std::make_shared<ModeValue>("Mode", std::vector<int>{ Legit }, std::vector<std::string>{ "Legit" }, Legit);

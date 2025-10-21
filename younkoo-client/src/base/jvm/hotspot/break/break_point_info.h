@@ -14,6 +14,9 @@ namespace java_hotspot {
 }
 
 namespace jvm_internal {
+
+	inline std::map<uintptr_t, uint8_t> spoofed_original_bytecodes;
+
 	class breakpoint_info {
 	public:
 		static auto create(java_hotspot::method* method, int bci) -> breakpoint_info*;
@@ -45,7 +48,6 @@ namespace java_hotspot {
 	class method;
 }
 
-
 class break_point_info {
 public:
 	explicit break_point_info(
@@ -74,6 +76,10 @@ public:
 	[[nodiscard]] inline long long* lload(std::size_t index) const
 	{
 		return (long long*)(this->parameters + (-1 - index) * 8);
+	}
+
+	inline void set_spoofed_bytecode(java_runtime::bytecodes bytecode) const {
+		jvm_internal::spoofed_original_bytecodes[this->get_bytecode_address()] = static_cast<uint8_t>(bytecode);
 	}
 
 	inline uintptr_t* get_operand(int i)

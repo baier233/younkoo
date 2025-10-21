@@ -414,7 +414,7 @@ bool TextBox::focusEvent(bool focused) {
 bool TextBox::keyboardEvent(int key, int /* scancode */, int action, int modifiers) {
 	if (mEditable && focused()) {
 		if (action == CALLBACK_PRESS) {
-			//std::cout << key << std::endl;
+			//LOG(key);
 			if (key == VK_LEFT) {
 				if (modifiers == CONTEXT_MOD_SHIFT) {
 					if (mSelectionPos == -1)

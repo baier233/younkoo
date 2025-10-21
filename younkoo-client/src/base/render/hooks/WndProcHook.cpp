@@ -11,27 +11,9 @@ static bool IsVkDown(int vk) {
 #include "../gui/input/Context.hpp"
 #include "../gui/input/IOEvents.h"
 #include <base/render/Renderer.hpp>
+#include <base/render/gui/api/VirtualKey.h>
 //#include "../glfw/glfw_constants.h"
 //
-static int getKeyMods(void)
-{
-	int mods = 0;
-
-	if (GetKeyState(VK_SHIFT) & 0x8000)
-		mods |= CONTEXT_MOD_SHIFT;
-	if (GetKeyState(VK_CONTROL) & 0x8000)
-		mods |= CONTEXT_MOD_CONTROL;
-	if (GetKeyState(VK_MENU) & 0x8000)
-		mods |= CONTEXT_MOD_ALT;
-	if ((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000)
-		mods |= CONTEXT_MOD_SUPER;
-	if (GetKeyState(VK_CAPITAL) & 1)
-		mods |= CONTEXT_MOD_CAPS_LOCK;
-	if (GetKeyState(VK_NUMLOCK) & 1)
-		mods |= CONTEXT_MOD_NUM_LOCK;
-
-	return mods;
-}
 
 
 CallBackcursorposfun YounkooCursorPosCallback;
@@ -45,9 +27,13 @@ CallBackwindowsetfoucs YounkooWindowFocusCallback;
 #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static bool skip = false;
+	if (WndProcHook::LOCK)
+	{
+		return CallWindowProcW(WndProcHook::GL_HANDLE, hWnd, message, wParam, lParam);;
+	}
 	switch (message)
 	{
 	case WM_MOUSEMOVE:
@@ -234,11 +220,11 @@ static WNDPROC SetCallbacks(HWND hWnd)
 
 	YounkooMouseButtonCallback = [](HWND window, int button, int action, int mods) {
 		// 鼠标按钮回调
-		//std::cout << "Button :" << button << " action :" << action << std::endl;
+		//LOG("Button :" << button << " action :" << action);
 
 
-		if (action == CALLBACK_PRESS) context.MouseDown[button] = true;
-		if (action == CALLBACK_RELEASE) context.MouseDown[button] = false;
+		if (action == CALLBACK_PRESS) inputContext.MouseDown[button] = true;
+		if (action == CALLBACK_RELEASE) inputContext.MouseDown[button] = false;
 
 		if (YounkooIO::IOEvents.IOEventsMouseButtonCallback)
 		{
@@ -262,22 +248,22 @@ static WNDPROC SetCallbacks(HWND hWnd)
 		if (is_key_down) YounkooIO::keyEvents.push(YounkooIO::KeyEvent(window, key, action));
 
 
-		context.KeysDown[key] = is_key_down;
+		inputContext.KeysDown[key] = is_key_down;
 
 		if (key == VK_SHIFT)
 		{
-			if (IsVkDown(VK_LSHIFT) == is_key_down) { context.KeysDown[VK_LSHIFT] = is_key_down; }
-			if (IsVkDown(VK_RSHIFT) == is_key_down) { context.KeysDown[VK_RSHIFT] = is_key_down; }
+			if (IsVkDown(VK_LSHIFT) == is_key_down) { inputContext.KeysDown[VK_LSHIFT] = is_key_down; }
+			if (IsVkDown(VK_RSHIFT) == is_key_down) { inputContext.KeysDown[VK_RSHIFT] = is_key_down; }
 		}
 		else if (key == VK_CONTROL)
 		{
-			if (IsVkDown(VK_LCONTROL) == is_key_down) { context.KeysDown[VK_LCONTROL] = is_key_down; }
-			if (IsVkDown(VK_RCONTROL) == is_key_down) { context.KeysDown[VK_RCONTROL] = is_key_down; }
+			if (IsVkDown(VK_LCONTROL) == is_key_down) { inputContext.KeysDown[VK_LCONTROL] = is_key_down; }
+			if (IsVkDown(VK_RCONTROL) == is_key_down) { inputContext.KeysDown[VK_RCONTROL] = is_key_down; }
 		}
 		else if (key == VK_MENU)
 		{
-			if (IsVkDown(VK_LMENU) == is_key_down) { context.KeysDown[VK_LMENU] = is_key_down; }
-			if (IsVkDown(VK_RMENU) == is_key_down) { context.KeysDown[VK_RMENU] = is_key_down; }
+			if (IsVkDown(VK_LMENU) == is_key_down) { inputContext.KeysDown[VK_LMENU] = is_key_down; }
+			if (IsVkDown(VK_RMENU) == is_key_down) { inputContext.KeysDown[VK_RMENU] = is_key_down; }
 		}
 
 
@@ -322,7 +308,7 @@ static WNDPROC SetCallbacks(HWND hWnd)
 		};
 
 	YounkooWindowSizeCallback = [](HWND window, int width, int height) {
-		//std::cout << "Reshape :" << width << "," << height << std::endl;
+		//LOG("Reshape :" << width << "," << height);
 		// 窗口大小改变回调
 		WndProcHook::RESIZED.store(true);
 		auto& renderer = Renderer::get();

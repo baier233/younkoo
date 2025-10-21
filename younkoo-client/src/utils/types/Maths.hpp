@@ -94,6 +94,13 @@ namespace Math {
 		}
 
 	};
+
+	struct Rotation {
+		Rotation operator - (const Rotation& rhs) const { return Rotation(xRot - rhs.xRot, yRot - rhs.yRot); }
+		Rotation Invert() const { return Rotation{ -xRot, -yRot }; }
+		float xRot{ NAN };
+		float yRot{ NAN };
+	};
 	struct Vector2
 	{
 
@@ -327,11 +334,15 @@ namespace Math {
 			};
 
 			//Logger::Log("NDC.Z: " + std::to_string(ndc.z));
-			screenPos = Vector2D{
+			if (ndc.z > 1 && ndc.z < 1.15) {
+				screenPos = Vector2D{
 					((ndc.x + 1.0f) / 2.0f) * screenWidth,
 					((1.0f - ndc.y) / 2.0f) * screenHeight,
-			};
-			return true;
+				};
+				return true;
+			}
+
+			return false;
 		}
 	}
 
@@ -351,6 +362,10 @@ namespace Math {
 	inline float radiantsToDeg(float x)
 	{
 		return x * 180.f / PI;
+	}
+	inline float degToRadiants(float x)
+	{
+		return x * PI / 180.f;
 	}
 	inline Vector2 getAngles(Vector3<float> pos, Vector3<float> pos1)
 	{

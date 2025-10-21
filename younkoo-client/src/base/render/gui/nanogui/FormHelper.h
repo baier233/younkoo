@@ -117,7 +117,7 @@ NAMESPACE_END(detail)
  *      "float variable");
  *
  *    // add a new button
- *    h->addButton("Button", [&]() { std::cout << "Button pressed" << std::endl; });
+ *    h->addButton("Button", [&]() { LOG("Button pressed"); });
  *
  * \endrst
  */

@@ -4,7 +4,7 @@
 //#define TEST
 #define EMPTY_CONTENT
 
-
+#include <base/Younkoo.hpp>
 namespace SDK {
 
 	inline jobject MinecraftClassLoader;
@@ -65,6 +65,7 @@ namespace SDK {
 		return MinecraftClassLoader != nullptr;
 	}
 
+	[[deprecated]]
 	inline bool SetUpForge1181ClassLoader(std::string thread_name) {
 		auto jniEnv = JNI::get_env();
 		//(void)jniEnv->PushLocalFrame(15);
@@ -94,6 +95,91 @@ namespace SDK {
 		return MinecraftClassLoader != nullptr;
 	}
 
+	inline bool isForge() {
+		static auto result = false;
+		static auto checked = false;
+		static jclass ref = nullptr;
+		if (!checked) {
+			ref = JNI::get_env()->FindClass("net/minecraftforge/common/ForgeVersion");
+			result = ref != nullptr;
+		}
+		return result;
+	}
+
+	inline void CheckVersion() {
+		std::string cmd = GetCommandLineA();
+		if (cmd.find("1.18.1") != std::string::npos and cmd.find("forgeclient") != std::string::npos) {
+			LOG("forge 1.18.1");
+			SRGParser::get().SetVersion(Versions::FORGE_1_18_1);
+		}
+		else if (cmd.find("1.8.9") != std::string::npos) {
+			if (isForge()) {
+				LOG("forge 1.8.9");
+				SRGParser::get().SetVersion(Versions::FORGE_1_8_9);
+			}
+			else if (cmd.find("lunar") != std::string::npos)
+			{
+				LOG("lunar 1.8.9");
+				SRGParser::get().SetVersion(Versions::LUNAR_1_8_9);
+			}
+		}
+		else if (cmd.find("1.12.2") != std::string::npos) {
+			if (isForge()) {
+				LOG("forge 1.12.2");
+				SRGParser::get().SetVersion(Versions::FORGE_1_12_2);
+			}
+			else if (cmd.find("lunar") != std::string::npos)
+			{
+				LOG("lunar 1.12.2");
+				SRGParser::get().SetVersion(Versions::LUNAR_1_12_2);
+			}
+		}
+		else if (cmd.find("1.20.1") != std::string::npos and cmd.find("forgeclient") != std::string::npos) {
+			LOG("forge 1.20.1");
+			SRGParser::get().SetVersion(Versions::FORGE_1_20_1);
+		}
+		else if (cmd.find("1.20.4") != std::string::npos and cmd.find("fabricmc") != std::string::npos) {
+			LOG("fabric 1.20.4");
+			SRGParser::get().SetVersion(Versions::FABRIC_1_20_4);
+		}
+		else {
+			MessageBox(0, L"Unsupported version", 0, 0);
+			return;
+		}
+
+		auto v = SRGParser::get().GetVersion();
+		if (v == Versions::MCP_1_8_9 || v == Versions::FORGE_1_8_9 || v == Versions::LUNAR_1_8_9)
+		{
+			Younkoo::get().info.major = MajorVersion::MAJOR_189;
+		}
+		else  if (v == Versions::FORGE_1_18_1)
+		{
+			Younkoo::get().info.major = MajorVersion::MAJOR_1181;
+		}
+		else if (v == Versions::FORGE_1_20_1)
+		{
+			Younkoo::get().info.major = MajorVersion::MAJOR_1201;
+		}
+		else if (v == Versions::FORGE_1_12_2 || v == Versions::LUNAR_1_12_2 || v == Versions::MCP_1_12_2)
+		{
+			Younkoo::get().info.major = MajorVersion::MAJOR_112;
+		}
+		else if (v == Versions::FABRIC_1_20_4)
+		{
+			Younkoo::get().info.major = MajorVersion::MAJOR_1204;
+		}
+	}
+
+	inline std::string GetKlassName(jclass cls) {
+		auto env = JNI::get_env();
+		jmethodID mid_getName = env->GetMethodID(cls, "getName", "()Ljava/lang/String;");
+		jstring name = (jstring)env->CallObjectMethod(cls, mid_getName);
+		const char* name_chars = env->GetStringUTFChars(name, nullptr);
+		std::string name_str = name_chars;
+		env->ReleaseStringUTFChars(name, name_chars);
+		env->DeleteLocalRef(name);
+		return name_str;
+	}
 }
 
 
@@ -111,3 +197,18 @@ namespace maps
 #define BEGIN_1_18_1 namespace V1_18_1{
 
 #define END_1_18_1 }
+
+#define BEGIN_1_8_9 namespace V1_8_9{
+
+#define END_1_8_9 }
+
+#define BEGIN_1_12_2 namespace V1_12_2{
+
+#define END_1_12_2 }
+
+#define BEGIN_1_20_1 namespace V1_20_1 {
+
+#define END_1_20_1 }
+#define BEGIN_1_20_4 namespace V1_20_4 {
+
+#define END_1_20_4 }

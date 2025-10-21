@@ -3,6 +3,7 @@
 #include <SDK.hpp>
 #include <wrapper/versions/1_18_1/net/minecraft/world/entity/LivingEntity.h>
 #include <wrapper/versions/1_18_1/net/minecraft/world/entity/player/Inventory.h>
+#include <wrapper/versions/1_18_1/net/minecraft/world/inventory/AbstractContainerMenu.h>
 
 BEGIN_1_18_1
 BEGIN_KLASS_DEF_EX(Player, return SRGParser::get().getObfuscatedClassName("net/minecraft/world/entity/player/Player"), LivingEntity)
@@ -17,6 +18,14 @@ JNI::Method<jboolean, JNI::NOT_STATIC, DECLARE_NAME(
 JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/player/Player", "attack", "(Lnet/minecraft/world/entity/Entity;)V").first
 ), Entity> attack{ *this };
+
+JNI::Method<void, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedMethodName("net/minecraft/world/entity/player/Player", "jumpFromGround", "()V").first
+)> jumpFromGround{ *this };
+
+JNI::Field<AbstractContainerMenu, JNI::NOT_STATIC, DECLARE_NAME(
+	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/world/entity/player/Player"), "containerMenu")
+)> containerMenu{ *this };/* Lnet/minecraft/world/inventory/AbstractContainerMenu; */
 
 END_KLASS_DEF()
 END_1_18_1

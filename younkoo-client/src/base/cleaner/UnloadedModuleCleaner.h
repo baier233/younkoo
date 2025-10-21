@@ -32,7 +32,7 @@ namespace UnloadedModuleCleaner
 				PVOID RtlpUnloadEventTraceExPtr;
 
 				_RtlGetUnloadEventTraceEx(&RtlpUnloadEventTraceExSizePtr, &RtlpUnloadEventTraceExNumberPtr, &RtlpUnloadEventTraceExPtr);
-				/*std::cout << "RtlpUnloadEventTraceExSizePtr :" << RtlpUnloadEventTraceExSizePtr << "\nRtlpUnloadEventTraceExNumberPtr :" << RtlpUnloadEventTraceExNumberPtr << "\nRtlpUnloadEventTraceExPtr :" << RtlpUnloadEventTraceExPtr << std::endl;*/
+				/*LOG("RtlpUnloadEventTraceExSizePtr :" << RtlpUnloadEventTraceExSizePtr << "\nRtlpUnloadEventTraceExNumberPtr :" << RtlpUnloadEventTraceExNumberPtr << "\nRtlpUnloadEventTraceExPtr :" << RtlpUnloadEventTraceExPtr);*/
 
 				PCHAR RtlpUnloadEventTraceEx = *(PCHAR*)RtlpUnloadEventTraceExPtr;
 				ULONG RtlpUnloadEventTraceExSize = *RtlpUnloadEventTraceExSizePtr;
@@ -46,13 +46,8 @@ namespace UnloadedModuleCleaner
 					{
 						continue;
 					}
-					std::cout << "traceEntry[" << idx << "]" << traceEntry << std::endl;
 					wchar_t filename[MAX_PATH] = { 0 };
 					wcscpy(filename, traceEntry->ImageName);
-					std::wstring module_name(filename);
-					std::wcout << "module_name :" << module_name << "\t";
-					std::wcout << "BaseAddress :" << traceEntry->BaseAddress << "\t";
-					std::wcout << "TimeDateStamp :" << traceEntry->TimeDateStamp << std::endl;
 				}
 			}
 		}

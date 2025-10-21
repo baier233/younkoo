@@ -23,6 +23,13 @@ auto java_hotspot::const_pool::get_length() -> int {
 	return *reinterpret_cast<int*>(reinterpret_cast<uint8_t*>(this) + length_entry->offset);
 }
 
+auto java_hotspot::const_pool::get_size() -> int
+{
+	static auto* contatnPool = JVMWrappers::find_type("ConstantPool").value();
+	if (!contatnPool) return 0;
+	return contatnPool->size;
+}
+
 auto java_hotspot::const_pool::get_symbol_at(const int index) -> symbol* {
 	return *get_symbol_at_address(index);
 }

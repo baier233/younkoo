@@ -9,7 +9,7 @@
  * https://stackoverflow.com/questions/7943525/is-it-possible-to-figure-out-the-parameter-type-and-return-type-of-a-lambda
  * Original code is here: https://github.com/kennytm/utils/blob/master/traits.hpp
  */
-namespace dp {
+namespace dxg {
 	namespace detail {
 		template <typename>
 		struct member_function_traits {
@@ -124,4 +124,4 @@ namespace dp {
 		template <typename T>
 		struct function_traits<const volatile T&&> : public function_traits<T> {};
 	}  // namespace detail
-}  // namespace dp
+}  // namespace dxg

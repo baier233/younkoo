@@ -4,7 +4,6 @@
 #include "../nano/NanovgHelper.hpp"
 #include "../../event/Events.h"
 
-#include "../gui/clickgui/NewClickGui.h"
 typedef bool(__stdcall* template_wglSwapBuffers) (HDC hdc);
 static TitanHook<template_wglSwapBuffers> wglSwapBuffersHook;
 static LPVOID wglSwapBuffers{};
@@ -57,10 +56,15 @@ static void opengl_ctx_init() {
 	glDisable(GL_DEPTH_TEST);
 
 }
-
+#define ENABLE_NEW_GUI
 
 #include "../../../utils/Wnd.h"
 #include "../../../utils/Wstr.h"
+#include <base/features/modules/world/CaveFinder.h>
+#include <base/render/screen/instance/GuiInstance.h>
+#include <JVM.hpp>
+#include <base/features/modules/common/CommonData.h>
+#include <base/render/screen/impl/GuiScreen.h>
 bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 	if (Younkoo::get().shouldShutDown) return wglSwapBuffersHook.GetOrignalFunc()(hdc);
 	auto& renderer = Renderer::get();
@@ -72,11 +76,11 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 
 
 	if (!renderer.Initialized) {
-
+		auto env = JVM::get().attachAndGetEnv();
+		JNI::set_thread_env(env);
 		renderer.renderContext.HandleWindow = WindowFromDC(hdc);
 		WCHAR className[256];
 		GetClassNameW(renderer.renderContext.HandleWindow, className, sizeof(className) / sizeof(WCHAR));
-		wprintf(L"Class Name: %ls\n", className);
 		renderer.renderContext.ClassName = wstr::toString(className);
 		// Create My Mirror Context(When I rendering my own stuff,i use this context for not to impact the minecraft gl enviorment)
 
@@ -107,7 +111,11 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 		renderer.renderContext.winSize = std::make_pair(winWidth, winHeight);
 
 		WndProcHook::Init(renderer.renderContext.HandleWindow);
+		static auto screen = std::make_shared<GuiScreen>();
 		NanoGui::Init(renderer.renderContext.HandleWindow, hdc, NanoVGHelper::Context);
+#ifdef ENABLE_NEW_GUI
+		GuiInstance::RegisterGui(screen.get());
+#endif // ENABLE_NEW_GUI
 		glEnable(GL_TEXTURE_2D);
 		//UltralightHelper::SetupContext();
 		// Change it back to Minecraft's opengl context.
@@ -125,20 +133,37 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 			//wglCopyContext(renderer.renderContext.OriginalGLContext, renderer.renderContext.MenuGLContext, GL_ALL_ATTRIB_BITS);
 		}
 	}
+	glDepthFunc(GL_LEQUAL);
 	// Change current context back to mine.
+	if (CaveFinder::getInstance().getToggle())
+	{
+		glDepthFunc(GL_ALWAYS);
+	}
 	wglMakeCurrent(renderer.renderContext.HandleDeviceContext, renderer.renderContext.MenuGLContext);
 
 	// Do draw and render here.
 	auto& vg = NanoVGHelper::Context;
 	using namespace NanoVGHelper;
-	static NewClickGui GUI;
 
 
 
-	if (context.IsKeyPressed(VK_RSHIFT, false))
+	if (!CommonData::get().inChatScreen && inputContext.IsKeyPressed(VK_RSHIFT, false))
 	{
+#ifdef ENABLE_NEW_GUI
+		if (!NanoGui::available)
+		{
+			GuiInstance::Instance::screen->onGuiOpen();
+			NanoGui::available = !NanoGui::available;
+		}
+		else {
+			GuiInstance::Instance::screen->onGuiClose();
+		}
+		//do nothing
+#else
 		showMenu = !showMenu;
 		NanoGui::available = !NanoGui::available;
+#endif // ENABLE_NEW_GUI
+
 	}
 
 	if (WndProcHook::RESIZED.load())
@@ -149,6 +174,7 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 
 	if (NanoGui::available.load())
 	{
+		//GuiInstance::DrawGui();
 		NanoGui::drawGui();
 		//GUI.drawScreen(vg, renderer.renderContext.winSize);
 	}
@@ -159,7 +185,7 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 	//UltralightHelper::Update();
 	//UltralightHelper::Render();
 
-	context.EndFrame();
+	inputContext.EndFrame();
 
 	if (WndProcHook::RESIZED.load()) WndProcHook::RESIZED.store(false);
 
@@ -171,7 +197,6 @@ bool OpenGLHook::Detour_wglSwapBuffers(_In_ HDC hdc) {
 
 bool OpenGLHook::Init()
 {
-
 
 	// Hook wglswapbuffers here.
 	static auto gl = GetModuleHandleW(L"opengl32.dll");

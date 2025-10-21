@@ -31,14 +31,16 @@ bool Object::isEqualTo(const Object& other_Object)
 
 bool Object::instanceOf(jclass klass)
 {
-
-
 	return JNI::get_env()->IsInstanceOf(this->getObject(), klass);
 }
 
 
 bool Object::isNULL()
 {
+	if (!this->getObject())
+	{
+		return true;
+	}
 	return JNI::get_env()->IsSameObject(this->getObject(), NULL);
 }
 

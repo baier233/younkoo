@@ -48,6 +48,14 @@ auto jvm_break_points::original_bytecode_handler(
 	java_hotspot::method* method,
 	const uintptr_t bytecode_address
 ) -> uint8_t {
+	if (jvm_internal::spoofed_original_bytecodes.contains(bytecode_address))
+	{
+		const uint8_t original_bytecode = jvm_internal::spoofed_original_bytecodes[bytecode_address];
+		jvm_internal::spoofed_original_bytecodes.erase(bytecode_address);
+		return original_bytecode;
+	}
+
+
 	if (!original_bytecodes.contains(bytecode_address)) {
 		return original_bytecode_hook.GetOrignalFunc()(java_thread, method, bytecode_address);
 	}
@@ -88,7 +96,7 @@ auto jvm_break_points::remove_breakpoint(java_hotspot::method* method, const uin
 	*bytecode_address = bytecode;
 }
 
-auto jvm_break_points::remove_all_breakpoints(java_hotspot::method* method) -> void {
+auto jvm_break_points::remove_all_breakpoints(java_hotspot::method* method) ->void {
 	uint8_t* bytecode_start = method->get_const_method()->get_bytecode_start();
 	uint8_t* bytecode_end = bytecode_start + method->get_const_method()->get_bytecode_size();
 	for (uint8_t* bytecode_address = bytecode_start;; bytecode_address++) {
@@ -102,4 +110,21 @@ auto jvm_break_points::remove_all_breakpoints(java_hotspot::method* method) -> v
 			*bytecode_address = bytecode;
 		}
 	}
+}
+
+auto jvm_break_points::remove_all_breakpoints_cleaned(java_hotspot::method* method) -> std::vector<std::pair<uint8_t*, uint8_t>> {
+	std::vector<std::pair<uint8_t*, uint8_t>> result;
+	uint8_t* bytecode_start = method->get_const_method()->get_bytecode_start();
+	uint8_t* bytecode_end = bytecode_start + method->get_const_method()->get_bytecode_size();
+	for (uint8_t* bytecode_address = bytecode_start;; bytecode_address++) {
+		if (bytecode_end == bytecode_address) {
+			break;
+		}
+		if (original_bytecodes.contains(reinterpret_cast<uintptr_t>(bytecode_address))) {
+			const uint8_t bytecode = original_bytecodes[reinterpret_cast<uintptr_t>(bytecode_address)];
+			result.push_back(std::make_pair(static_cast<uint8_t*>(bytecode_address), bytecode));
+			*bytecode_address = bytecode;
+		}
+	}
+	return result;
 }

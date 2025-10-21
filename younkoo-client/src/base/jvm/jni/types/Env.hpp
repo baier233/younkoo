@@ -18,7 +18,7 @@ namespace JNI
 {
 	inline uint32_t _tls_index = 0;
 	inline std::vector<jobject> _refs_to_delete{};
-	inline std::mutex _refs_to_delete_mutex{};
+	inline static std::shared_mutex _refs_to_delete_mutex{};
 	inline jobject class_loader{};
 
 	inline JNIEnv* get_env()
@@ -65,7 +65,7 @@ namespace JNI
 	inline void shutdown() //needs to be called on exit, library unusable after this
 	{
 		{
-			std::lock_guard lock{ _refs_to_delete_mutex }; //shouldn't be necessary, every jni calls should be stopped before calling jni::destroy_cache
+			//std::lock_guard lock{ _refs_to_delete_mutex }; //shouldn't be necessary, every jni calls should be stopped before calling jni::destroy_cache
 			for (jobject object : _refs_to_delete)
 			{
 				if (!object) continue;

@@ -1,5 +1,6 @@
 ﻿#include "ConfigManager.h"
 
+#include <log/LOG.h>
 void ConfigManager::SaveConfig(std::string name)
 {
 	nlohmann::json jsonObject;
@@ -51,12 +52,17 @@ void ConfigManager::SaveConfig(std::string name)
 		std::ofstream jsonFile(jsonFilePath);
 		jsonFile << jsonObject.dump(4); // 4 表示缩进级别
 		jsonFile.close();
-		std::cout << "JSON configuration file has been saved to: " << jsonFilePath << std::endl;
+		LOG("JSON configuration file has been saved to: " << jsonFilePath);
 	}
 	catch (const std::exception& e)
 	{
 		std::cerr << "An error occurred while saving the JSON configuration file: " << e.what() << std::endl;
 	}
+
+}
+void ConfigManager::OpenConfigDirectory()
+{
+	ShellExecuteA(NULL, "open", "explorer.exe", this->GetConfigPath().string().c_str(), NULL, SW_SHOWNORMAL);
 
 }
 #include <utils/strutils.h>
@@ -72,7 +78,6 @@ void ConfigManager::LoadConfig(std::string name)
 	}
 	catch (const std::exception& e)
 	{
-		std::cerr << "An error occurred while reading the JSON configuration file: " << e.what() << std::endl;
 		return;
 	}
 	try
@@ -94,7 +99,7 @@ void ConfigManager::LoadConfig(std::string name)
 						auto valueName = value->getName();
 						if (jValueName == valueName)
 						{
-							std::cout << "True :" << jValueName << " == " << valueName << std::endl;
+							LOG("True :" << jValueName << " == " << valueName);
 							switch (valueType)
 							{
 							case BoolType:
@@ -136,7 +141,7 @@ void ConfigManager::LoadConfig(std::string name)
 	}
 	catch (const std::exception& e)
 	{
-		std::cout << e.what() << std::endl;
+		LOG(e.what());
 	}
 
 }

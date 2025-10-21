@@ -18,6 +18,13 @@ auto java_hotspot::instance_klass::get_constants() -> const_pool* {
 	return *reinterpret_cast<const_pool**>(reinterpret_cast<uint8_t*>(this) + _constants_entry->offset);
 }
 
+auto java_hotspot::instance_klass::set_constants(const_pool* cp) -> void
+{
+	static VMStructEntry* _constants_entry = JVMWrappers::find_type_fields("InstanceKlass").value().get()["_constants"];
+	if (!_constants_entry) return;
+	*reinterpret_cast<const_pool**>(reinterpret_cast<uint8_t*>(this) + _constants_entry->offset) = cp;
+}
+
 auto java_hotspot::instance_klass::get_methods()->array<method*>* {
 	static VMStructEntry* _methods_entry = JVMWrappers::find_type_fields("InstanceKlass").value().get()["_methods"];
 	if (!_methods_entry) return nullptr;

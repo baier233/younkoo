@@ -36,7 +36,7 @@ void AbstractModule::onToggled() {
 	NanoGui::updateModule(this);
 	if (!this->i_toggle) {
 		this->onEnable();
-	}
+	}											
 	else {
 		this->onDisable();
 	}

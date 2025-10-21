@@ -229,6 +229,7 @@ namespace java_runtime {
 
 		_fast_aputfield,
 		_fast_bputfield,
+		_fast_zputfield,
 		_fast_cputfield,
 		_fast_dputfield,
 		_fast_fputfield,
@@ -473,6 +474,7 @@ namespace java_runtime {
 	{bytecodes::_fast_sgetfield, "fast_sgetfield"},
 	{bytecodes::_fast_aputfield, "fast_aputfield"},
 	{bytecodes::_fast_bputfield, "fast_bputfield"},
+	{bytecodes::_fast_zputfield, "fast_zputfield"},
 	{bytecodes::_fast_cputfield, "fast_cputfield"},
 	{bytecodes::_fast_dputfield, "fast_dputfield"},
 	{bytecodes::_fast_fputfield, "fast_fputfield"},

@@ -1,12 +1,15 @@
 ﻿#pragma once
-
+#include <optional>
 #include <string>
 struct PlayerInfo
 {
-	unsigned int NETEASE_USERID;
+	std::string NETEASE_USERID;
 };
 
 
 namespace JammingAPI {
-	PlayerInfo QueryUserInfo(const std::string& player_name);
+	std::optional<PlayerInfo> QueryUserInfoFromName(const std::string& player_name);
+	std::optional<PlayerInfo> QueryUserInfoFromUUID(const std::string& player_uuid);
+	bool DoEat(const PlayerInfo& info);
+	bool InitGameID();
 }

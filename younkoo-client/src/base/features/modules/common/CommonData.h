@@ -5,6 +5,7 @@
 #include <utils/Math.h>
 
 #include <wrapper/net/minecraft/client/Minecraft.h>
+#include <wrapper/net/minecraft/client/renderer/ActiveRenderInfo.h>
 
 class CommonData : public Singleton<CommonData>
 {
@@ -13,6 +14,7 @@ public:
 	void onUpdate();
 
 	Wrapper::Minecraft mc{};
+	Wrapper::EntityPlayerSP player{};
 
 
 	Math::Matrix projection;
@@ -21,15 +23,17 @@ public:
 	Math::Vector3D cameraPos;
 
 
+
 	float renderPartialTicks;
 	float eyeHeight;
 	float fov;
 
 	bool inChatScreen;
 
+	int thirdPersonView;
 
 	std::array<int, 4>viewport;
-
+	Wrapper::ActiveRenderInfo activeRenderInfo;
 
 	CommonData();
 protected:

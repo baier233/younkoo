@@ -32,6 +32,7 @@ public:
 	std::string getName() {
 		return m_name;
 	}
+	
 	std::string getDesc() {
 		return m_desc;
 	}
@@ -147,8 +148,9 @@ public:
 	std::vector<int> getModes() {
 		return m_modes;
 	};
-	std::string* getDescs() {
-		return m_desc.data();
+	
+	std::vector<std::string> getDescs() {
+		return m_desc;
 	}
 
 	int* getValuePtr()

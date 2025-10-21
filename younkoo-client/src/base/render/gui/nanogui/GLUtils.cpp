@@ -414,8 +414,6 @@ void GLFramebuffer::blit() {
 void GLFramebuffer::downloadTGA(const std::string& filename) {
 	uint8_t* temp = new uint8_t[mSize.prod() * 4];
 
-	std::cout << "Writing \"" << filename << "\" (" << mSize.x() << "x" << mSize.y() << ") .. ";
-	std::cout.flush();
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, mFramebuffer);
 	glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
@@ -453,7 +451,6 @@ void GLFramebuffer::downloadTGA(const std::string& filename) {
 	fclose(tga);
 
 	delete[] temp;
-	std::cout << "done." << std::endl;
 }
 
 //  ----------------------------------------------------

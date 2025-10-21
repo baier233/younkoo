@@ -1,10 +1,17 @@
 ﻿#include "Chunk.h"
 #include <wrapper/versions/1_18_1/net/minecraft/world/level/chunk/LevelChunk.h>
+#include <wrapper/versions/1_20_1/net/minecraft/world/level/chunk/LevelChunk.h>
 Math::ChunkPos Wrapper::Chunk::getPos()
 {
 	if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1)
 	{
 		V1_18_1::LevelChunk chunk = this->getObject();
+		auto chunkPos = chunk.getPos();
+		return Math::ChunkPos{ chunkPos.x.get(),chunkPos.z.get() };
+	}
+	else if (SRGParser::get().GetVersion() == Versions::FORGE_1_20_1)
+	{
+		V1_20_1::LevelChunk chunk = this->getObject();
 		auto chunkPos = chunk.getPos();
 		return Math::ChunkPos{ chunkPos.x.get(),chunkPos.z.get() };
 	}
@@ -19,6 +26,12 @@ Math::ChunkPos Wrapper::Chunk::getMinPos()
 		auto chunkPos = chunk.getPos();
 		return Math::ChunkPos{ chunkPos.getMinBlockX(),chunkPos.getMinBlockZ() };
 	}
+	else if (SRGParser::get().GetVersion() == Versions::FORGE_1_20_1)
+	{
+		V1_20_1::LevelChunk chunk = this->getObject();
+		auto chunkPos = chunk.getPos();
+		return Math::ChunkPos{ chunkPos.getMinBlockX(),chunkPos.getMinBlockZ() };
+	}
 	return Math::ChunkPos();
 }
 
@@ -29,6 +42,11 @@ int Wrapper::Chunk::getHeight()
 		V1_18_1::LevelChunk chunk = this->getObject();
 		return chunk.getHeight();
 	}
+	else if (SRGParser::get().GetVersion() == Versions::FORGE_1_20_1)
+	{
+		V1_20_1::LevelChunk chunk = this->getObject();
+		return chunk.getHeight();
+	}
 	return 0;
 }
 
@@ -37,6 +55,11 @@ int Wrapper::Chunk::getBottomY()
 	if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1)
 	{
 		V1_18_1::LevelChunk chunk = this->getObject();
+		return chunk.getMinBuildHeight();
+	}
+	if (SRGParser::get().GetVersion() == Versions::FORGE_1_20_1)
+	{
+		V1_20_1::LevelChunk chunk = this->getObject();
 		return chunk.getMinBuildHeight();
 	}
 	return 0;

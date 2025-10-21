@@ -1,12 +1,28 @@
 ﻿#include "ItemBow.h"
 
 #include <wrapper/versions/1_18_1/net/minecraft/world/item/BowItem.h>
+#include <wrapper/versions/1_20_1/net/minecraft/world/item/BowItem.h>
+#include <wrapper/versions/1_8_9/net/minecraft/item/ItemBow.h>
+#include <wrapper/versions/1_12_2/net/minecraft/item/ItemBow.h>
 
 jclass Wrapper::ItemBow::klass()
 {
-	if (SRGParser::get().GetVersion() == Versions::FORGE_1_18_1)
+	if (Younkoo::get().info.major == MajorVersion::MAJOR_1181)
 	{
 		static auto klass = V1_18_1::BowItem::static_obj().init();
+		return klass;
+	}
+	else if (Younkoo::get().info.major == MajorVersion::MAJOR_1201)
+	{
+		static auto klass = V1_20_1::BowItem::static_obj().init();
+		return klass;
+	}
+	else if (Younkoo::get().info.major == MajorVersion::MAJOR_112) {
+		static auto klass = V1_12_2::ItemBow::static_obj().init();
+		return klass;
+	}
+	else if (Younkoo::get().info.major == MajorVersion::MAJOR_189) {
+		static auto klass = V1_8_9::ItemBow::static_obj().init();
 		return klass;
 	}
 	return jclass();

@@ -29,6 +29,9 @@ protected:
 	DEFINE_BOOL_VALUE(adaptiveValue, "Adaptive", "Adaptive", true);
 	DEFINE_BOOL_VALUE(aimAssistFeedbackValue, "AimAssistFeedback", "AimAssistFeedback", true);
 	DEFINE_BOOL_VALUE(fovCircleValue, "FovCircle", "FovCircle", true);
+	DEFINE_BOOL_VALUE(canAttackCheckValue, "Can Attack Check", "Can Attack Check", true);
+	DEFINE_BOOL_VALUE(breakBlockCheckValue, "Break Block Check", "Break Block Check", false);
+
 	std::shared_ptr<ModeValue> targetPriorityValue = std::make_shared<ModeValue>("TargetPriority", std::vector<int>{ Distance, Health, Crosshair }, std::vector<std::string>{ "Distance", "Health", "Closest to Crosshair" }, Crosshair);
 
 	enum TARGETMODE {

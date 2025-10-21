@@ -10,6 +10,13 @@ public:
 	float getHealth();
 	Wrapper::ItemStack getMainHandItemStack();
 	Wrapper::ItemStack getOffhandItemStack();
+	void setJumpTicks(int tick);
+	static jclass klass();
+	bool canAttack(const EntityLivingBase& entity);
+	bool canEntityBeSeen(const Entity& entity);
+	float getMaxHealth();
+	float getAbsorptionAmount();
+	int getHurtTime();
 };
 
 END_WRAP

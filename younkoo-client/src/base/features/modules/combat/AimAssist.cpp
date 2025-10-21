@@ -11,7 +11,7 @@
 
 
 
-AimAssist::AimAssist() :AbstractModule(xorstr_("AimAssist"), Category::COMBAT)
+AimAssist::AimAssist() :AbstractModule(xorstr_("AimAssist"), Category::COMBAT, xorstr_("Aim Assist."))
 {
 	this->addValue(FloatType, fovValue);
 	this->addValue(FloatType, aimDistanceValue);
@@ -24,6 +24,8 @@ AimAssist::AimAssist() :AbstractModule(xorstr_("AimAssist"), Category::COMBAT)
 	this->addValue(BoolType, adaptiveValue);
 	this->addValue(BoolType, aimAssistFeedbackValue);
 	this->addValue(BoolType, fovCircleValue);
+	this->addValue(BoolType, canAttackCheckValue);
+	this->addValue(BoolType, breakBlockCheckValue);
 	this->addValue(ListType, targetPriorityValue);
 	REGISTER_EVENT(EventRender2D, AimAssist::onRender2D);
 }
@@ -103,11 +105,15 @@ static auto calcRot = [](Wrapper::EntityPlayerSP& thePlayer, Wrapper::Entity& ot
 	auto targetYawRot = Math::wrapAngleTo180((float)((std::atan2(relativePosZ, relativePosX) * (double)(180.f / (float)PI)) - 90.0));
 	return { targetYawRot,targetPitchRot };
 	};
+#include <base/features/api/ClickApi.h>
 
 void AimAssist::onUpdate()
 {
 	ToggleCheck;
 	if (NanoGui::available) return;
+	auto mc = Wrapper::Minecraft::getMinecraft();
+	if (mc.isInGuiState()) return;
+	if (breakBlockCheckValue->getValue() && Wrapper::Minecraft().getPlayerController().isHittingBlock()) return;
 	auto aimDistance = aimDistanceValue->getValue();
 	auto aimKey = aimKeyValue->getValue();
 	auto fov = fovValue->getValue();
@@ -117,21 +123,34 @@ void AimAssist::onUpdate()
 	auto adaptiveOffset = adaptiveOffsetValue->getValue();
 	auto smooth = smoothValue->getValue();
 	auto fovCircle = fovCircleValue->getValue();
+	if (aimKey) {
+		if (Younkoo::get().info.major <= MajorVersion::MAJOR_112)
+		{
+			if (!GetAsyncKeyState(VK_LBUTTON) && 1) {
 
-	if ((aimKey && (!GetAsyncKeyState(VK_LBUTTON) && 1))) {
-		AimAssist::data = {};
-		return;
+				AimAssist::data = {};
+				return;
+			}
+		}
+		else {
+
+			if (!(inputContext.IsMousePressed(ClickApi::keyAttack))) {
+
+				AimAssist::data = {};
+				return;
+			}
+		}
 	}
 
 	float renderPartialTicks = CommonData::get().renderPartialTicks;
-	auto mc = Wrapper::Minecraft::getMinecraft();
 
 	auto level = mc.getWorld();
 	auto players = level.getPlayerList();
 
 	auto thePlayer = mc.getPlayer();
 	Math::Vector3D headPos = thePlayer.getPosition() + Math::Vector3D{ 0, thePlayer.getEyeHeight(), 0 };
-	auto currentLookAngles = thePlayer.getAngles();
+	auto currentLookRot = thePlayer.getAngles();
+	Math::Vector2 currentLookAngles = { .x = currentLookRot.yRot,.y = currentLookRot.xRot };
 
 	Wrapper::EntityPlayer target{};
 	float finalDist = FLT_MAX;
@@ -169,6 +188,11 @@ void AimAssist::onUpdate()
 		float dist = sqrt(pow(diff.x, 2) + pow(diff.y, 2) + pow(diff.z, 2));
 		if ((abs(difference.x) <= fov) && dist <= realAimDistance)
 		{
+
+			if (player.isNULL() || Team::getInstance().isSameTeam(player))
+			{
+				continue;
+			}
 			float health = player.getHealth();
 			switch (this->targetPriorityValue->getValue())
 			{
@@ -202,11 +226,29 @@ void AimAssist::onUpdate()
 		return;
 	}
 
-	if (Team::getInstance().isSameTeam(target))
+	if (canAttackCheckValue->getValue() && !thePlayer.canEntityBeSeen(target))
 	{
 		data = {};
 		return;
 	}
+
+	bool playerNotMoved =
+		(
+			thePlayer.getMotion().x == 0.0f &&
+			thePlayer.getMotion().z == 0.0f
+			);
+	bool targetNotMoved =
+		(
+			target.getMotion().x == 0.0f &&
+			target.getMotion().z == 0.0f
+			);
+
+	if (playerNotMoved && targetNotMoved)
+	{
+		randomYaw = 0.0f;
+		randomPitch = 0.0f;
+	}
+
 
 	Math::Vector3D ePos = target.getPosition();
 	Math::Vector3D eRenderPos = target.getPosition(renderPartialTicks);
@@ -223,6 +265,7 @@ void AimAssist::onUpdate()
 
 
 	float offset = randomFloat(-randomYaw, randomYaw);
+
 	if (adaptive) {
 		if ((GetAsyncKeyState('D') & 0x8000) && !(GetAsyncKeyState('A') & 0x8000)) {
 			offset -= adaptiveOffset;

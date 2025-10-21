@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 #include <SDK.hpp>
-
+#include <wrapper/versions/1_20_1/net/minecraft/core/Vec3i.h>
 #include <wrapper/versions/1_20_1/net/minecraft/world/phys/Vec3.h>
 
 BEGIN_1_20_1
 
-BEGIN_KLASS_DEF(BlockPos, return SRGParser::get().getObfuscatedClassName("net/minecraft/core/BlockPos"))
+BEGIN_KLASS_DEF_EX(BlockPos, return SRGParser::get().getObfuscatedClassName("net/minecraft/core/BlockPos"), Vec3i)
 
 JNI::Field<jint, JNI::STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedFieldName(SRGParser::get().getObfuscatedClassName("net/minecraft/core/BlockPos"), "PACKED_X_LENGTH")
@@ -60,18 +60,19 @@ JNI::Method<jint, JNI::STATIC, DECLARE_NAME(
 	return SRGParser::get().getObfuscatedMethodName("net/minecraft/core/BlockPos", "getZ", "(J)I").first
 ), jlong> getZ{ *this };
 
-JNI::ConstructorMethod<jdouble, jdouble, jdouble> consturctor1{ *this };
-static inline BlockPos create(jdouble x, jdouble y, jdouble z) {
+JNI::ConstructorMethod<jint, jint, jint> consturctor1{ *this };
+
+static inline BlockPos create(jint x, jint y, jint z) {
 	return BlockPos::new_object(&BlockPos::consturctor1, x, y, z);
 }
 
-JNI::ConstructorMethod<Vec3> consturctor2{ *this };
-static inline BlockPos create(Vec3 vec3_obj) {
-	return BlockPos::new_object(&BlockPos::consturctor2, vec3_obj);
+JNI::ConstructorMethod<Vec3i> consturctor2{ *this };
+static inline BlockPos create(Vec3i vec3i_obj) {
+	return BlockPos::new_object(&BlockPos::consturctor2, vec3i_obj);
 }
 
 static inline BlockPos create(Math::Vector3D vec3) {
-	return BlockPos::new_object(&BlockPos::consturctor2, Vec3::fromVector3(vec3));
+	return BlockPos::new_object(&BlockPos::consturctor2, Vec3i::fromVector3(vec3));
 }
 END_KLASS_DEF();
 
